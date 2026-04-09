@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Bible Studies | Pure & Simple Bible</title>
+
+    <!-- Primary Meta Tags -->
+    <meta name="title" content="Interactive Bible Studies | Pure & Simple Bible">
+    <meta name="description"
+        content="Engage with the scriptures through our free, online interactive study series. Create an account to save your progress, test your knowledge, and deepen your faith.">
+
+    <!-- Open Graph / Facebook / iMessage -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://psbstudies.com/">
+    <meta property="og:title" content="Interactive Bible Studies | Pure & Simple Bible">
+    <meta property="og:description"
+        content="Engage with the scriptures through our free, online interactive study series. Create an account to save your progress, test your knowledge, and deepen your faith.">
+    <meta property="og:image" content="https://psbstudies.com/assets/img/psb_preview.jpg">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://psbstudies.com/">
+    <meta property="twitter:title" content="Interactive Bible Studies | Pure & Simple Bible">
+    <meta property="twitter:description"
+        content="Engage with the scriptures through our free, online interactive study series. Create an account to save your progress, test your knowledge, and deepen your faith.">
+    <meta property="twitter:image" content="https://psbstudies.com/assets/img/psb_preview.jpg">
+
+    <link rel="icon" type="image/jpeg" href="assets/img/psb_preview.jpg">
+
+    <!-- Import Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&family=Merriweather:ital,wght@0,400;0,700;1,400&display=swap"
+        rel="stylesheet">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .serif-text {
+            font-family: 'Merriweather', 'Georgia', serif;
+        }
+
+        .font-roboto {
+            font-family: 'Roboto', sans-serif;
+        }
+
+        /* The custom background pattern for the hero section */
+        .hero-bg {
+            background-color: #1a1a1a;
+            background-image:
+                radial-gradient(circle at 20% 50%, rgba(10, 80, 110, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 80% 50%, rgba(210, 105, 30, 0.1) 0%, transparent 50%),
+                url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+
+        .bg-pattern {
+            background-color: #f8fafc;
+            background-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%230a506e' fill-opacity='0.03' fill-rule='evenodd'%3E%3Ccircle cx='3' cy='3' r='3'/%3E%3Ccircle cx='13' cy='13' r='3'/%3E%3C/g%3E%3C/svg%3E");
+        }
+
+        /* Smooth scrolling for anchor links */
+        html {
+            scroll-behavior: smooth;
+        }
+    </style>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            DEFAULT: '#0a506e',
+                            dark: '#1e293b',
+                            light: '#78a0c8',
+                            accent: '#8cbea0',
+                            highlight: '#d2691e' /* The burnt orange accent */
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+
+<body class="bg-pattern min-h-screen flex flex-col font-roboto text-gray-800">
+
+    <!-- Navigation -->
+    <nav class="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 py-4 flex justify-center items-center">
+            <!-- You can replace this text with your actual PSB Logo image if you have one for the root site -->
+            <a href="/" class="flex items-center gap-3 hover:opacity-80 transition-opacity">
+                <span class="font-black text-2xl tracking-widest uppercase text-brand-dark">Pure & Simple <span
+                        class="text-brand">Bible</span></span>
+            </a>
+        </div>
+    </nav>
+
+    <main class="flex-grow">
+
+        <!-- HERO SECTION -->
+        <section class="hero-bg relative border-b-4 border-brand-highlight">
+            <div class="max-w-5xl mx-auto px-4 py-24 md:py-32 relative z-10 text-center">
+
+                <h2
+                    class="text-brand-highlight font-black tracking-[0.2em] uppercase text-sm md:text-base mb-4 drop-shadow-md">
+                    Welcome to the Interactive Portal
+                </h2>
+
+                <h1
+                    class="text-4xl md:text-6xl lg:text-7xl font-black text-white uppercase tracking-tight leading-tight mb-6 drop-shadow-lg">
+                    Discover <br class="hidden md:block" /> God's Word
+                </h1>
+
+                <p class="text-gray-300 text-lg md:text-xl max-w-2xl mx-auto leading-relaxed mb-10 serif-text">
+                    Engage with the scriptures through our free, online interactive study series. Create an account to
+                    save your progress, test your knowledge, and deepen your faith.
+                </p>
+
+                <a href="#studies"
+                    class="inline-block bg-brand-highlight hover:bg-orange-700 text-white font-bold text-lg py-4 px-10 rounded shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300 uppercase tracking-wider">
+                    View Studies
+                </a>
+            </div>
+
+            <!-- Bottom decorative fade -->
+            <div class="absolute bottom-0 left-0 w-full h-16 bg-gradient-to-t from-black/40 to-transparent"></div>
+        </section>
+
+        <!-- STUDIES GRID SECTION -->
+        <section id="studies" class="py-20 px-4">
+            <div class="max-w-7xl mx-auto">
+
+                <div class="text-center mb-16">
+                    <h2 class="text-3xl md:text-4xl font-black text-brand-dark uppercase tracking-tight mb-4">Available
+                        Series</h2>
+                    <div class="w-24 h-1 bg-brand-highlight mx-auto rounded"></div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+
+                    <!-- COURSE CARD 1: THE REDEMPTION SERIES (Featured) -->
+                    <a href="/theredemptionseries/"
+                        class="block bg-white rounded-xl shadow-xl border-2 border-brand overflow-hidden hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 group flex flex-col h-full relative cursor-pointer">
+                        <!-- 'Featured' Ribbon -->
+                        <div
+                            class="absolute top-4 right-[-35px] bg-brand-highlight text-white text-xs font-black uppercase tracking-widest py-1 px-10 rotate-45 shadow-md z-10">
+                            Featured
+                        </div>
+
+                        <div class="h-56 bg-brand-dark overflow-hidden border-b border-brand">
+                            <!-- Make sure image is named thumb_redemption.png in your assets folder -->
+                            <img src="assets/img/thumb_redemption.png" alt="The Redemption Series"
+                                class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
+                        </div>
+                        <div class="p-8 flex-grow flex flex-col">
+                            <h3
+                                class="text-2xl font-black text-brand-dark uppercase tracking-tight mb-3 group-hover:text-brand transition-colors">
+                                The Redemption Series</h3>
+                            <p class="text-gray-600 mb-6 flex-grow leading-relaxed">
+                                Where do we come from? Why are we here? The Bible answers these questions by explaining
+                                mankind's greatest problem—sin—and God's ultimate solution through Jesus Christ.
+                            </p>
+                            <div
+                                class="block w-full text-center bg-brand text-white group-hover:bg-brand-dark font-bold py-3 px-4 rounded shadow group-hover:shadow-lg transition-colors duration-300 mt-auto">
+                                Start Study &rarr;
+                            </div>
+                        </div>
+                    </a>
+
+                    <!-- COURSE CARD 2: THE CHURCH SERIES -->
+                    <div
+                        class="bg-white rounded-xl shadow-md border border-gray-200 overflow-hidden hover:shadow-2xl hover:border-brand transition-all duration-300 group flex flex-col h-full relative">
+                        <!-- 'Coming Soon' Ribbon -->
+                        <div
+                            class="absolute top-5 right-[-40px] bg-brand-light text-white text-[10px] md:text-xs font-black uppercase tracking-widest py-1 px-12 rotate-45 shadow-md z-10">
+                            Coming Soon
+                        </div>
+                        <div class="h-56 bg-gray-100 overflow-hidden border-b border-gray-100">
+                            <!-- Make sure image is named thumb_church.png in your assets folder -->
+                            <img src="assets/img/thumb_church.png" alt="The Church Series"
+                                class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
+                        </div>
+                        <div class="p-8 flex-grow flex flex-col">
+                            <h3
+                                class="text-2xl font-black text-brand-dark uppercase tracking-tight mb-3 group-hover:text-brand transition-colors">
+                                The Church Series</h3>
+                            <p class="text-gray-600 mb-6 flex-grow leading-relaxed">
+                                Jesus promised to build His church and purchased it with His own blood. Explore God's
+                                original New Testament blueprint for the church, its organization, and its worship.
+                            </p>
+                            <span
+                                class="block w-full text-center bg-gray-100 text-gray-400 font-bold py-3 px-4 rounded cursor-not-allowed transition-colors duration-300 mt-auto">
+                                Coming Soon
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- COURSE CARD 3: THE BIBLE SERIES -->
+                    <div
+                        class="bg-white rounded-xl shadow-md border border-gray-200 overflow-hidden hover:shadow-2xl hover:border-brand transition-all duration-300 group flex flex-col h-full relative">
+                        <!-- 'Coming Soon' Ribbon -->
+                        <div
+                            class="absolute top-5 right-[-40px] bg-brand-light text-white text-[10px] md:text-xs font-black uppercase tracking-widest py-1 px-12 rotate-45 shadow-md z-10">
+                            Coming Soon
+                        </div>
+                        <div class="h-56 bg-gray-100 overflow-hidden border-b border-gray-100">
+                            <!-- Make sure image is named thumb_bible.png in your assets folder -->
+                            <img src="assets/img/thumb_bible.png" alt="The Bible Series"
+                                class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
+                        </div>
+                        <div class="p-8 flex-grow flex flex-col">
+                            <h3
+                                class="text-2xl font-black text-brand-dark uppercase tracking-tight mb-3 group-hover:text-brand transition-colors">
+                                The Bible Series</h3>
+                            <p class="text-gray-600 mb-6 flex-grow leading-relaxed">
+                                The Bible is the most important book ever written. Discover its origin, inspiration, and
+                                transmission, and learn why we can trust it as the ultimate standard of truth.
+                            </p>
+                            <span
+                                class="block w-full text-center bg-gray-100 text-gray-400 font-bold py-3 px-4 rounded cursor-not-allowed transition-colors duration-300 mt-auto">
+                                Coming Soon
+                            </span>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- ABOUT SECTION -->
+        <section class="bg-white py-16 border-t border-gray-200">
+            <div class="max-w-4xl mx-auto px-4 text-center">
+                <h3 class="text-2xl font-bold text-brand-dark mb-4">A Pure & Simple Bible Study</h3>
+                <p class="text-gray-600 leading-relaxed text-lg serif-text">
+                    Our goal is to present the Word of God simply and purely, allowing the scriptures to speak for
+                    themselves. Whether you are opening the Bible for the first time or seeking to deepen a lifelong
+                    faith, these interactive guides are designed to help you study at your own pace.
+                </p>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-brand-dark py-12 border-t-4 border-brand-highlight">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+            <a href="http://www.pureandsimplebible.com/" target="_blank" rel="noopener noreferrer"
+                class="inline-block opacity-75 hover:opacity-100 transition-opacity duration-300 mb-6">
+                <!-- Fallback to text if the main logo isn't available at the root -->
+                <span class="font-black text-xl tracking-widest uppercase text-white">Pure & Simple <span
+                        class="text-brand-light">Bible</span></span>
+            </a>
+
+            <div class="flex justify-center gap-6 mb-8 text-sm font-bold text-gray-400">
+                <a href="/theredemptionseries/" class="hover:text-white transition-colors">The Redemption Series</a>
+                <span class="cursor-not-allowed opacity-50" title="Coming Soon">The Church Series</span>
+                <span class="cursor-not-allowed opacity-50" title="Coming Soon">The Bible Series</span>
+            </div>
+
+            <p class="text-sm text-gray-500">&copy;
+                <script>document.write(new Date().getFullYear())</script> Pure & Simple Bible. All Rights Reserved.
+            </p>
+        </div>
+    </footer>
+
+</body>
+
+</html>

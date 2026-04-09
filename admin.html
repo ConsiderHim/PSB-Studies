@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diagnostic Master Admin | Pure & Simple Bible</title>
+    <link rel="icon" type="image/png" href="assets/img/rs_roundthorncrown.png">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: { brand: { DEFAULT: '#0a506e', dark: '#1e293b', highlight: '#d2691e' } }
+                }
+            }
+        }
+    </script>
+
+    <script>
+        function adminEngine() {
+            return {
+                password: '',
+                isAuthenticated: sessionStorage.getItem('rs_admin_auth') === 'true',
+                authError: '',
+                isLoading: false,
+                currentTab: 'progress',
+
+                students: [],
+                instructors: [],
+                selectedStudent: null,
+                studentProgress: [],
+
+                apiPath() {
+                    return 'api.php?nocache=' + new Date().getTime();
+                },
+
+                // EXTREME DIAGNOSTIC GETTER
+                // This forces the UI to reveal exactly what the database sent
+                getDiagnosticInstructor(email) {
+                    if (email === null) return '❌ DB RETURNED NULL';
+                    if (email === undefined) return '❌ DB RETURNED UNDEFINED';
+                    if (String(email).trim() === '') return '❌ DB RETURNED EMPTY STRING';
+
+                    // If it has a value, show exactly what it is!
+                    return '✅ RAW DB VALUE: ' + email;
+                },
+
+                init() {
+                    if (this.isAuthenticated) {
+                        this.password = sessionStorage.getItem('rs_admin_pass') || '';
+                        this.fetchInstructors().then(() => { this.fetchStudents(); });
+                    }
+                },
+
+                async login() {
+                    this.isLoading = true;
+                    this.authError = '';
+                    try {
+                        let res = await fetch(this.apiPath(), {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ action: 'admin_login', admin_password: this.password })
+                        });
+                        let data = await res.json();
+
+                        if (data.success) {
+                            this.isAuthenticated = true;
+                            sessionStorage.setItem('rs_admin_auth', 'true');
+                            sessionStorage.setItem('rs_admin_pass', this.password);
+                            await this.fetchInstructors();
+                            this.fetchStudents();
+                        } else {
+                            this.authError = data.message || "Invalid password.";
+                        }
+                    } catch (e) {
+                        this.authError = "Connection error.";
+                    }
+                    this.isLoading = false;
+                },
+
+                logout() {
+                    this.isAuthenticated = false;
+                    this.password = '';
+                    this.students = [];
+                    sessionStorage.clear();
+                },
+
+                async fetchStudents() {
+                    try {
+                        let res = await fetch(this.apiPath(), {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ action: 'admin_get_students', admin_password: this.password })
+                        });
+                        let data = await res.json();
+                        if (data.success) {
+                            this.students = data.students;
+                        } else if (data.message === "Unauthorized") {
+                            this.logout();
+                        }
+                    } catch (e) {
+                        console.error("Diagnostic Error fetching students:", e);
+                    }
+                },
+
+                async fetchInstructors() {
+                    try {
+                        let res = await fetch(this.apiPath(), {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ action: 'admin_get_instructors', admin_password: this.password })
+                        });
+                        let data = await res.json();
+                        if (data.success) {
+                            this.instructors = data.instructors;
+                        } else {
+                            console.error("API returned error for instructors:", data.message);
+                        }
+                    } catch (e) {
+                        console.error("Diagnostic Error fetching instructors:", e);
+                    }
+                },
+
+                formatDate(dateString) {
+                    if (!dateString) return 'N/A';
+                    let d = new Date(dateString);
+                    return d.toLocaleDateString('en-US');
+                }
+            }
+        }
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+</head>
+
+<body class="bg-gray-50 min-h-screen flex flex-col text-gray-800" x-data="adminEngine()">
+    <nav class="bg-brand-dark text-white shadow-md sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <span class="font-bold text-xl tracking-wider text-brand-highlight">DIAGNOSTIC ADMIN</span>
+            </div>
+            <div x-show="isAuthenticated" x-cloak>
+                <button @click="logout()" class="text-gray-300 hover:text-white text-sm font-bold">Sign Out</button>
+            </div>
+        </div>
+    </nav>
+
+    <main class="flex-grow p-4 md:p-8">
+        <template x-if="!isAuthenticated">
+            <div class="max-w-md mx-auto mt-20 p-8 bg-white rounded-xl shadow-lg border-t-4 border-brand-highlight">
+                <div class="text-center mb-6">
+                    <h2 class="text-2xl font-bold text-brand-dark">Master Admin Access</h2>
+                </div>
+                <form @submit.prevent="login" class="space-y-4">
+                    <input type="password" x-model="password" required placeholder="Password"
+                        class="w-full p-3 border border-gray-300 rounded text-center">
+                    <p x-show="authError" class="text-red-500 text-sm font-bold text-center" x-text="authError"></p>
+                    <button type="submit" class="w-full bg-brand-highlight text-white font-bold py-3 rounded"
+                        :disabled="isLoading">Login</button>
+                </form>
+            </div>
+        </template>
+
+        <template x-if="isAuthenticated">
+            <div class="max-w-6xl mx-auto">
+                <div class="flex justify-between items-center mb-6">
+                    <h1 class="text-3xl font-bold text-brand-dark">Diagnostic Student List</h1>
+                    <button @click="fetchStudents()"
+                        class="text-sm bg-gray-200 text-gray-700 px-3 py-1 rounded font-bold shadow-sm">↻
+                        Refresh</button>
+                </div>
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr
+                                class="bg-gray-50 text-gray-500 text-sm uppercase tracking-wider border-b border-gray-200">
+                                <th class="p-4 font-bold">Student Email</th>
+                                <th class="p-4 font-bold">Raw Database Assignment Value</th>
+                                <th class="p-4 font-bold">Joined Date</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-100">
+                            <template x-for="student in students" :key="student.id">
+                                <tr class="hover:bg-gray-50">
+                                    <td class="p-4 font-bold text-brand-dark" x-text="student.email"></td>
+
+                                    <!-- DIAGNOSTIC OUTPUT -->
+                                    <td class="p-4 text-sm font-bold"
+                                        :class="!student.assigned_instructor ? 'text-red-600 bg-red-50' : 'text-green-700 bg-green-50'"
+                                        x-text="getDiagnosticInstructor(student.assigned_instructor)">
+                                    </td>
+
+                                    <td class="p-4 text-sm text-gray-600" x-text="formatDate(student.created_at)"></td>
+                                </tr>
+                            </template>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </template>
+    </main>
+</body>
+
+</html>

@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Course Completed | Pure & Simple Bible</title>
+    <link rel="icon" type="image/jpg" href="assets/img/psb_preview.jpg">
+
+    <!-- Import Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&family=Merriweather:ital,wght@0,400;0,700;1,400&display=swap"
+        rel="stylesheet">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .serif-text {
+            font-family: 'Merriweather', 'Georgia', serif;
+        }
+
+        .font-roboto {
+            font-family: 'Roboto', sans-serif;
+        }
+
+        .bg-pattern {
+            background-color: #f8fafc;
+            background-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%230a506e' fill-opacity='0.03' fill-rule='evenodd'%3E%3Ccircle cx='3' cy='3' r='3'/%3E%3Ccircle cx='13' cy='13' r='3'/%3E%3C/g%3E%3C/svg%3E");
+        }
+
+        [x-cloak] {
+            display: none !important;
+        }
+    </style>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            DEFAULT: '#0a506e',
+                            dark: '#1e293b',
+                            light: '#78a0c8',
+                            accent: '#8cbea0',
+                            highlight: '#d2691e'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Alpine.js -->
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+</head>
+
+<body class="bg-pattern min-h-screen flex flex-col font-roboto text-gray-800"
+    x-data="{ studyName: new URLSearchParams(window.location.search).get('study') || 'this Interactive Bible Study' }">
+
+    <!-- Navigation -->
+    <nav class="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 py-4 flex justify-center items-center">
+            <a href="/" class="flex items-center gap-3 hover:opacity-80 transition-opacity">
+                <span class="font-black text-2xl tracking-widest uppercase text-brand-dark">Pure & Simple <span
+                        class="text-brand">Bible</span></span>
+            </a>
+        </div>
+    </nav>
+
+    <main class="flex-grow flex items-center justify-center p-4 py-12">
+
+        <div
+            class="max-w-3xl w-full bg-white rounded-2xl shadow-2xl border-t-8 border-t-brand-highlight overflow-hidden">
+
+            <!-- Confetti / Celebration Graphic Area -->
+            <div class="bg-gradient-to-b from-orange-50 to-white pt-12 pb-6 px-8 text-center relative">
+                <div
+                    class="w-24 h-24 bg-brand-highlight text-white rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg border-4 border-white">
+                    <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z">
+                        </path>
+                    </svg>
+                </div>
+
+                <h1 class="text-4xl md:text-5xl font-black text-brand-dark tracking-tight mb-2">Congratulations!</h1>
+                <h2 class="text-xl md:text-2xl text-gray-500 font-medium">
+                    You have successfully completed <br class="md:hidden" />
+                    <span class="text-brand font-bold" x-text="studyName"></span>.
+                </h2>
+            </div>
+
+            <!-- Message Area -->
+            <div class="px-8 md:px-16 py-8 text-center">
+                <p class="text-lg md:text-xl text-gray-700 leading-relaxed serif-text mb-6">
+                    You have taken a wonderful step in your spiritual journey by completing this study. We hope that
+                    exploring God's Word has brought you closer to Him and provided clear answers to some of life's
+                    biggest questions.
+                </p>
+                <p class="text-lg md:text-xl text-gray-700 leading-relaxed serif-text mb-10">
+                    The scriptures are a well of endless wisdom, and this is just the beginning. We encourage you to
+                    continue seeking His truth, applying these lessons to your life, and sharing the good news with
+                    others.
+                </p>
+
+                <div class="w-16 h-1 bg-gray-200 mx-auto rounded mb-10"></div>
+
+                <h3 class="text-lg font-bold text-brand-dark mb-6 uppercase tracking-wider">Your Next Steps</h3>
+
+                <!-- Action Buttons -->
+                <div class="flex flex-col md:flex-row items-center justify-center gap-4">
+
+                    <!-- Primary Action: More Studies -->
+                    <a href="https://www.psbstudies.com/"
+                        class="w-full md:w-auto bg-brand hover:bg-brand-dark text-white font-bold py-4 px-8 rounded shadow-lg transition-colors flex items-center justify-center gap-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                        </svg>
+                        Start Another Study
+                    </a>
+
+                    <!-- Secondary Action: Certificate -->
+                    <a href="mailto:connect@psbstudies.com?subject=Certificate Request"
+                        class="w-full md:w-auto bg-brand-highlight hover:bg-orange-700 text-white font-bold py-4 px-8 rounded shadow-lg transition-colors flex items-center justify-center gap-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        Request Certificate
+                    </a>
+
+                </div>
+
+                <div class="mt-6">
+                    <!-- Tertiary Action: Contact -->
+                    <a href="mailto:connect@psbstudies.com?subject=Question about my study"
+                        class="text-brand font-bold hover:underline text-sm flex items-center justify-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z">
+                            </path>
+                        </svg>
+                        Have questions? Speak with an instructor.
+                    </a>
+                </div>
+
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-brand-dark py-8 border-t-4 border-brand-highlight text-center mt-auto">
+        <p class="text-sm text-gray-500 font-bold">&copy;
+            <script>document.write(new Date().getFullYear())</script> Pure & Simple Bible. All Rights Reserved.
+        </p>
+    </footer>
+
+</body>
+
+</html>

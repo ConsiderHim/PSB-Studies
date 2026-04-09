@@ -1,0 +1,83 @@
+[
+  {
+    "name": "David Peake",
+    "email": "david@considerhim.com",
+    "city": "Amarillo",
+    "state": "TX",
+    "lat": "35.221997",
+    "long": "-101.831299",
+    "zone": "2"
+  },
+  {
+    "name": "Glen Buckley",
+    "email": "david@considerhim.com",
+    "city": "Grants Pass",
+    "state": "OR",
+    "lat": "42.4505753",
+    "long": "-123.3347978",
+    "zone": "1"
+  },
+  {
+    "name": "Rich Toomsen",
+    "email": "david@considerhim.com",
+    "city": "Marion",
+    "state": "IA",
+    "lat": "42.0353209",
+    "long": "-91.6037569",
+    "zone": "1"
+  },
+  {
+    "name": "Sam Garrison",
+    "email": "david@considerhim.com",
+    "city": "Salem",
+    "state": "OR",
+    "lat": "44.8746253",
+    "long": "-123.0785339",
+    "zone": "1"
+  },
+  {
+    "name": "Matt Tison",
+    "email": "david@considerhim.com",
+    "city": "Waterloo",
+    "state": "IA",
+    "lat": "42.4536415",
+    "long": "-92.3085574",
+    "zone": "2"
+  },
+  {
+    "name": "Bob Cunningham",
+    "email": "david@considerhim.com",
+    "city": "Shreveport",
+    "state": "LA",
+    "lat": "32.4957156",
+    "long": "-93.7967376",
+    "zone": "2"
+  },
+  {
+    "name": "Nate Bibens",
+    "email": "davidpeake@gmail.com",
+    "city": "Lawrenceburg",
+    "state": "TN",
+    "lat": "35.2423023",
+    "long": "-87.3347389",
+    "zone": "3"
+  },
+  {
+    "name": "Brett Hickey",
+    "email": "europe@thetruthfrees.com",
+    "city": "London",
+    "state": "UK",
+    "lat": "51.5074456",
+    "long": "-0.1277653",
+    "zone": "1"
+  },
+  {
+    "name": "David Peake",
+    "email": "asia@thetruthfrees.com",
+    "city": "Honolulu",
+    "state": "HI",
+    "lat": "21.3045470",
+    "long": "-157.8556760",
+    "zone": "1"
+  }
+]
