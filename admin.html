@@ -1,32 +1,25 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Master Admin Dashboard | Pure & Simple Bible</title>
     <link rel="icon" type="image/png" href="assets/img/rs_roundthorncrown.png">
-
+    
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
-
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        .serif-text {
-            font-family: 'Merriweather', 'Georgia', serif;
-        }
-
+        .serif-text { font-family: 'Merriweather', 'Georgia', serif; }
         .bg-pattern {
             background-color: #f8fafc;
             background-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%230a506e' fill-opacity='0.03' fill-rule='evenodd'%3E%3Ccircle cx='3' cy='3' r='3'/%3E%3Ccircle cx='13' cy='13' r='3'/%3E%3C/g%3E%3C/svg%3E");
         }
-
-        [x-cloak] {
-            display: none !important;
-        }
+        [x-cloak] { display: none !important; }
     </style>
-
+    
     <script>
         tailwind.config = {
             theme: {
@@ -47,13 +40,13 @@
                 isAuthenticated: sessionStorage.getItem('rs_admin_auth') === 'true',
                 authError: '',
                 isLoading: false,
-
+                
                 currentTab: 'progress', /* 'progress', 'manage', or 'instructors' */
-
+                
+                /* Student State */
                 students: [],
                 selectedStudent: null,
                 studentProgress: [],
-                lessonsData: null,
 
                 /* New Student Form */
                 newStudentEmail: '',
@@ -64,52 +57,46 @@
                 newStudentError: '',
                 newStudentSuccess: '',
 
-                /* Update Forms */
+                /* Update Password, Phone, and Location Forms */
                 updatePasswordId: null,
                 updatePasswordValue: '',
                 updatePasswordError: '',
                 updatePasswordSuccess: '',
-
+                
                 updatePhoneId: null,
                 updatePhoneValue: '',
                 updatePhoneError: '',
                 updatePhoneSuccess: '',
-
+                
                 updateLocationId: null,
                 updateCountryValue: 'United States',
                 updateZipcodeValue: '',
                 updateLocationError: '',
                 updateLocationSuccess: '',
 
+                /* Country List for Dropdowns */
                 countryList: ["United States", "Afghanistan", "Albania", "Algeria", "Andorra", "Angola", "Antigua and Barbuda", "Argentina", "Armenia", "Australia", "Austria", "Azerbaijan", "Bahamas", "Bahrain", "Bangladesh", "Barbados", "Belarus", "Belgium", "Belize", "Benin", "Bhutan", "Bolivia", "Bosnia and Herzegovina", "Botswana", "Brazil", "Brunei", "Bulgaria", "Burkina Faso", "Burundi", "Côte d'Ivoire", "Cabo Verde", "Cambodia", "Cameroon", "Canada", "Central African Republic", "Chad", "Chile", "China", "Colombia", "Comoros", "Congo", "Costa Rica", "Croatia", "Cuba", "Cyprus", "Czechia", "Democratic Republic of the Congo", "Denmark", "Djibouti", "Dominica", "Dominican Republic", "Ecuador", "Egypt", "El Salvador", "Equatorial Guinea", "Eritrea", "Estonia", "Eswatini", "Ethiopia", "Fiji", "Finland", "France", "Gabon", "Gambia", "Georgia", "Germany", "Ghana", "Greece", "Grenada", "Guatemala", "Guinea", "Guinea-Bissau", "Guyana", "Haiti", "Holy See", "Honduras", "Hungary", "Iceland", "India", "Indonesia", "Iran", "Iraq", "Ireland", "Israel", "Italy", "Jamaica", "Japan", "Jordan", "Kazakhstan", "Kenya", "Kiribati", "Kuwait", "Kyrgyzstan", "Laos", "Latvia", "Lebanon", "Lesotho", "Liberia", "Libya", "Liechtenstein", "Lithuania", "Luxembourg", "Madagascar", "Malawi", "Malaysia", "Maldives", "Mali", "Malta", "Marshall Islands", "Mauritania", "Mauritius", "Mexico", "Micronesia", "Moldova", "Monaco", "Mongolia", "Montenegro", "Morocco", "Mozambique", "Myanmar", "Namibia", "Nauru", "Nepal", "Netherlands", "New Zealand", "Nicaragua", "Niger", "Nigeria", "North Korea", "North Macedonia", "Norway", "Oman", "Pakistan", "Palau", "Palestine State", "Panama", "Papua New Guinea", "Paraguay", "Peru", "Philippines", "Poland", "Portugal", "Qatar", "Romania", "Russia", "Rwanda", "Saint Kitts and Nevis", "Saint Lucia", "Saint Vincent and the Grenadines", "Samoa", "San Marino", "Sao Tome and Principe", "Saudi Arabia", "Senegal", "Serbia", "Seychelles", "Sierra Leone", "Singapore", "Slovakia", "Slovenia", "Solomon Islands", "Somalia", "South Africa", "South Korea", "South Sudan", "Spain", "Sri Lanka", "Sudan", "Suriname", "Sweden", "Switzerland", "Syria", "Tajikistan", "Tanzania", "Thailand", "Timor-Leste", "Togo", "Tonga", "Trinidad and Tobago", "Tunisia", "Turkey", "Turkmenistan", "Tuvalu", "Uganda", "Ukraine", "United Arab Emirates", "United Kingdom", "Uruguay", "Uzbekistan", "Vanuatu", "Venezuela", "Vietnam", "Yemen", "Zambia", "Zimbabwe"],
 
+                /* Instructors State */
                 instructors: [],
-                instructorForm: { id: null, name: '', email: '', password: '', city: '', state: '', lat: '', long: '' },
-                isEditingInstructor: false,
+                instructorForm: { name: '', email: '', city: '', state: '', lat: '', long: '', zone: '' },
+                editingInstructorIndex: null,
                 instructorMessage: '',
                 instructorError: '',
+                
+                lessonsData: null,
 
-                /* --- CACHE BUSTING HELPER --- */
+                /* --- ABSOLUTE PATH HELPER TO PREVENT 404 ERRORS --- */
                 apiPath() {
-                    // Forcing the absolute path guarantees it NEVER looks in a subfolder!
-                    return 'https://psbstudies.com/api.php?nocache=' + new Date().getTime();
-                },
-
-                /* --- HELPER: GET INSTRUCTOR NAME --- */
-                getInstructorName(email) {
-                    if (!email || String(email).trim() === '') return 'Unassigned';
-                    let safeEmail = String(email).trim().toLowerCase();
-                    let inst = this.instructors.find(i => String(i.email).trim().toLowerCase() === safeEmail);
-
-                    // FALLBACK: Print raw email if not found in array so it never falsely says 'Unassigned'
-                    return inst ? inst.name : 'Unknown (' + email + ')';
+                    // This forces the dashboard to pull from the root public_html api.php file!
+                    return 'api.php?nocache=' + new Date().getTime();
                 },
 
                 init() {
                     if (this.isAuthenticated) {
                         this.password = sessionStorage.getItem('rs_admin_pass') || '';
                         this.fetchLessonsData();
-
+                        
                         this.fetchInstructors().then(() => {
                             this.fetchStudents();
                         });
@@ -126,13 +113,13 @@
                             body: JSON.stringify({ action: 'admin_login', admin_password: this.password })
                         });
                         let data = await res.json();
-
+                        
                         if (data.success) {
                             this.isAuthenticated = true;
                             sessionStorage.setItem('rs_admin_auth', 'true');
                             sessionStorage.setItem('rs_admin_pass', this.password);
                             this.fetchLessonsData();
-
+                            
                             await this.fetchInstructors();
                             this.fetchStudents();
                         } else {
@@ -154,26 +141,12 @@
                     sessionStorage.removeItem('rs_admin_pass');
                 },
 
-                /* --- DATA FETCHING --- */
-                async fetchLessonsData() {
-                    try {
-                        let res = await fetch('theredemptionseries/data/lessons.json?nocache=' + new Date().getTime());
-                        if (!res.ok) {
-                            res = await fetch('data/lessons.json?nocache=' + new Date().getTime());
-                        }
-                        let data = await res.json();
-                        this.lessonsData = data.lessons;
-                    } catch (e) {
-                        console.error("Could not load lessons data.", e);
-                    }
-                },
-
                 /* --- STUDENT FUNCTIONS --- */
                 async fetchStudents() {
                     try {
                         let res = await fetch(this.apiPath(), {
                             method: 'POST',
-                            headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-cache' },
+                            headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify({ action: 'admin_get_students', admin_password: this.password })
                         });
                         let data = await res.json();
@@ -196,17 +169,17 @@
                     try {
                         let res = await fetch(this.apiPath(), {
                             method: 'POST',
-                            headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-cache' },
+                            headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify({ action: 'admin_get_student_details', admin_password: this.password, student_id: id })
                         });
                         let data = await res.json();
                         if (data.success) {
                             this.selectedStudent = data.student;
-
+                            
                             if (this.selectedStudent.assigned_instructor) {
                                 this.selectedStudent.assigned_instructor = String(this.selectedStudent.assigned_instructor).trim().toLowerCase();
                             }
-
+                            
                             this.studentProgress = data.progress;
                             window.scrollTo({ top: 0, behavior: 'smooth' });
                         }
@@ -239,6 +212,47 @@
                         alert("Connection error.");
                     }
                 },
+                
+                async fetchLessonsData() {
+                    try {
+                        // Looking specifically into the theredemptionseries subfolder since admin.html is at the root
+                        let res = await fetch('theredemptionseries/data/lessons.json?nocache=' + new Date().getTime());
+                        if (!res.ok) {
+                            res = await fetch('data/lessons.json?nocache=' + new Date().getTime());
+                        }
+                        let data = await res.json();
+                        this.lessonsData = data.lessons;
+                    } catch(e) {
+                        console.error("Could not load lessons data.");
+                    }
+                },
+                
+                parseQuiz(lessonId, quizDataStr) {
+                    if (!quizDataStr || !this.lessonsData) return [];
+                    try {
+                        let answers = typeof quizDataStr === 'string' ? JSON.parse(quizDataStr) : quizDataStr;
+                        if (!answers) return [];
+                        let lesson = this.lessonsData.find(l => l.id == lessonId);
+                        if (!lesson || !lesson.quiz) return [];
+                        
+                        let results = [];
+                        if (lesson.quiz.true_false) {
+                            lesson.quiz.true_false.forEach(q => {
+                                let ans = answers[q.id];
+                                let isCorrect = String(ans).toLowerCase() === String(q.answer).toLowerCase();
+                                results.push({ type: 'True / False', question: q.question, answer: ans || 'No answer', correct: isCorrect, expected: String(q.answer) });
+                            });
+                        }
+                        if (lesson.quiz.fill_blank) {
+                            lesson.quiz.fill_blank.forEach(q => {
+                                let ans = answers[q.id] || '';
+                                let isCorrect = ans.trim().toLowerCase() === String(q.answer).trim().toLowerCase();
+                                results.push({ type: 'Search the Scriptures', question: q.verse, answer: ans || 'No answer', correct: isCorrect, expected: q.answer });
+                            });
+                        }
+                        return results;
+                    } catch(e) { return []; }
+                },
 
                 async addStudent() {
                     this.newStudentError = '';
@@ -251,8 +265,8 @@
                         let res = await fetch(this.apiPath(), {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({
-                                action: 'admin_add_student',
+                            body: JSON.stringify({ 
+                                action: 'admin_add_student', 
                                 admin_password: this.password,
                                 email: this.newStudentEmail,
                                 phone: this.newStudentPhone,
@@ -321,8 +335,8 @@
                         let data = await res.json();
                         if (data.success) {
                             this.updatePhoneSuccess = "Phone updated successfully!";
-                            setTimeout(() => {
-                                this.updatePhoneSuccess = '';
+                            setTimeout(() => { 
+                                this.updatePhoneSuccess = ''; 
                                 this.updatePhoneId = null;
                                 this.fetchStudents();
                             }, 2000);
@@ -333,7 +347,7 @@
                         this.updatePhoneError = "Connection error.";
                     }
                 },
-
+                
                 startLocationUpdate(id, currentCountry, currentZipcode) {
                     this.updateLocationId = id;
                     this.updateCountryValue = currentCountry || 'United States';
@@ -351,10 +365,10 @@
                         let res = await fetch(this.apiPath(), {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({
-                                action: 'admin_update_student_location',
-                                admin_password: this.password,
-                                student_id: this.updateLocationId,
+                            body: JSON.stringify({ 
+                                action: 'admin_update_student_location', 
+                                admin_password: this.password, 
+                                student_id: this.updateLocationId, 
                                 new_country: this.updateCountryValue,
                                 new_zipcode: this.updateZipcodeValue
                             })
@@ -362,8 +376,8 @@
                         let data = await res.json();
                         if (data.success) {
                             this.updateLocationSuccess = "Location updated successfully!";
-                            setTimeout(() => {
-                                this.updateLocationSuccess = '';
+                            setTimeout(() => { 
+                                this.updateLocationSuccess = ''; 
                                 this.updateLocationId = null;
                                 this.fetchStudents();
                             }, 2000);
@@ -397,8 +411,8 @@
                         let data = await res.json();
                         if (data.success) {
                             this.updatePasswordSuccess = "Password updated!";
-                            setTimeout(() => {
-                                this.updatePasswordSuccess = '';
+                            setTimeout(() => { 
+                                this.updatePasswordSuccess = ''; 
                                 this.updatePasswordId = null;
                             }, 2000);
                         } else {
@@ -409,12 +423,12 @@
                     }
                 },
 
-                /* --- INSTRUCTOR DB FUNCTIONS --- */
+                /* --- INSTRUCTOR FUNCTIONS --- */
                 async fetchInstructors() {
                     try {
                         let res = await fetch(this.apiPath(), {
                             method: 'POST',
-                            headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-cache' },
+                            headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify({ action: 'admin_get_instructors', admin_password: this.password })
                         });
                         let data = await res.json();
@@ -432,17 +446,18 @@
                 async submitInstructorForm() {
                     this.instructorMessage = '';
                     this.instructorError = '';
-
-                    let actionName = this.isEditingInstructor ? 'admin_update_instructor' : 'admin_add_instructor';
-
+                    
+                    let actionName = this.editingInstructorIndex !== null ? 'admin_update_instructor' : 'admin_add_instructor';
+                    let instId = this.editingInstructorIndex !== null ? this.instructors[this.editingInstructorIndex].id : null;
+                    
                     try {
                         let res = await fetch(this.apiPath(), {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({
-                                action: actionName,
+                            body: JSON.stringify({ 
+                                action: actionName, 
                                 admin_password: this.password,
-                                instructor_id: this.instructorForm.id,
+                                instructor_id: instId,
                                 name: this.instructorForm.name,
                                 email: this.instructorForm.email,
                                 password: this.instructorForm.password,
@@ -454,7 +469,7 @@
                         });
                         let data = await res.json();
                         if (data.success) {
-                            this.instructorMessage = this.isEditingInstructor ? "Instructor updated!" : "Instructor added!";
+                            this.instructorMessage = this.editingInstructorIndex !== null ? "Instructor updated!" : "Instructor added!";
                             this.cancelInstructorEdit();
                             this.fetchInstructors();
                             setTimeout(() => { this.instructorMessage = ''; }, 3000);
@@ -466,22 +481,20 @@
                     }
                 },
 
-                editInstructor(inst) {
-                    this.isEditingInstructor = true;
-                    this.instructorForm = {
-                        id: inst.id, name: inst.name, email: inst.email, password: '',
-                        city: inst.city, state: inst.state, lat: inst.lat, long: inst.long
-                    };
+                editInstructor(index) {
+                    this.editingInstructorIndex = index;
+                    this.instructorForm = { ...this.instructors[index] };
                     window.scrollTo({ top: 0, behavior: 'smooth' });
                 },
 
-                async deleteInstructor(id, name) {
-                    if (!confirm(`Are you sure you want to delete ${name}?`)) return;
+                async deleteInstructor(index) {
+                    let inst = this.instructors[index];
+                    if(!confirm(`Are you sure you want to delete ${inst.name}?`)) return;
                     try {
                         let res = await fetch(this.apiPath(), {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ action: 'admin_delete_instructor', admin_password: this.password, instructor_id: id })
+                            body: JSON.stringify({ action: 'admin_delete_instructor', admin_password: this.password, instructor_id: inst.id })
                         });
                         let data = await res.json();
                         if (data.success) {
@@ -495,8 +508,8 @@
                 },
 
                 cancelInstructorEdit() {
-                    this.isEditingInstructor = false;
-                    this.instructorForm = { id: null, name: '', email: '', password: '', city: '', state: '', lat: '', long: '' };
+                    this.editingInstructorIndex = null;
+                    this.instructorForm = { name: '', email: '', city: '', state: '', lat: '', long: '', zone: '' };
                 },
 
                 /* --- GEOCODING --- */
@@ -506,12 +519,12 @@
 
                     this.instructorMessage = 'Finding coordinates...';
                     this.instructorError = '';
-
+                    
                     try {
                         let query = encodeURIComponent(`${this.instructorForm.city}, ${this.instructorForm.state}`);
                         let res = await fetch(`https://nominatim.openstreetmap.org/search?q=${query}&format=json&limit=1`);
                         let data = await res.json();
-
+                        
                         if (data && data.length > 0) {
                             this.instructorForm.lat = parseFloat(data[0].lat).toFixed(4);
                             this.instructorForm.long = parseFloat(data[0].lon).toFixed(4);
@@ -544,34 +557,16 @@
                         return Object.entries(obj)
                             .filter(([key, val]) => !isNaN(key) && String(key).trim() !== '')
                             .map(([key, val]) => ({ q: parseInt(key) + 1, a: val }));
-                    } catch (e) { return []; }
+                    } catch(e) { return []; }
                 },
 
-                parseQuiz(lessonId, quizDataStr) {
-                    if (!quizDataStr || !this.lessonsData) return [];
-                    try {
-                        let answers = typeof quizDataStr === 'string' ? JSON.parse(quizDataStr) : quizDataStr;
-                        if (!answers) return [];
-                        let lesson = this.lessonsData.find(l => l.id == lessonId);
-                        if (!lesson || !lesson.quiz) return [];
-
-                        let results = [];
-                        if (lesson.quiz.true_false) {
-                            lesson.quiz.true_false.forEach(q => {
-                                let ans = answers[q.id];
-                                let isCorrect = String(ans).toLowerCase() === String(q.answer).toLowerCase();
-                                results.push({ type: 'True / False', question: q.question, answer: ans || 'No answer', correct: isCorrect, expected: String(q.answer) });
-                            });
-                        }
-                        if (lesson.quiz.fill_blank) {
-                            lesson.quiz.fill_blank.forEach(q => {
-                                let ans = answers[q.id] || '';
-                                let isCorrect = ans.trim().toLowerCase() === String(q.answer).trim().toLowerCase();
-                                results.push({ type: 'Search the Scriptures', question: q.verse, answer: ans || 'No answer', correct: isCorrect, expected: q.answer });
-                            });
-                        }
-                        return results;
-                    } catch (e) { return []; }
+                /* --- HELPER: GET INSTRUCTOR NAME --- */
+                getInstructorName(email) {
+                    if (!email || String(email).trim() === '') return 'Unassigned';
+                    let safeEmail = String(email).trim().toLowerCase();
+                    let inst = this.instructors.find(i => String(i.email).trim().toLowerCase() === safeEmail);
+                    
+                    return inst ? inst.name : email;
                 }
             }
         }
@@ -587,14 +582,10 @@
                 <span class="font-bold text-xl tracking-wider text-brand-highlight">MASTER ADMIN</span>
             </div>
             <div x-show="isAuthenticated" x-cloak class="flex gap-6 items-center">
-                <div class="flex gap-4 border-r border-white/20 pr-6">
-                    <button @click="currentTab = 'progress'; goBack()" class="text-sm font-bold transition-colors"
-                        :class="currentTab === 'progress' ? 'text-brand-highlight' : 'text-gray-300 hover:text-white'">Progress</button>
-                    <button @click="currentTab = 'manage'; goBack()" class="text-sm font-bold transition-colors"
-                        :class="currentTab === 'manage' ? 'text-brand-highlight' : 'text-gray-300 hover:text-white'">Manage
-                        Students</button>
-                    <button @click="currentTab = 'instructors'; goBack()" class="text-sm font-bold transition-colors"
-                        :class="currentTab === 'instructors' ? 'text-brand-highlight' : 'text-gray-300 hover:text-white'">Instructors</button>
+                 <div class="flex gap-4 border-r border-white/20 pr-6">
+                    <button @click="currentTab = 'progress'; goBack()" class="text-sm font-bold transition-colors" :class="currentTab === 'progress' ? 'text-brand-highlight' : 'text-gray-300 hover:text-white'">Progress</button>
+                    <button @click="currentTab = 'manage'; goBack()" class="text-sm font-bold transition-colors" :class="currentTab === 'manage' ? 'text-brand-highlight' : 'text-gray-300 hover:text-white'">Manage Students</button>
+                    <button @click="currentTab = 'instructors'; goBack()" class="text-sm font-bold transition-colors" :class="currentTab === 'instructors' ? 'text-brand-highlight' : 'text-gray-300 hover:text-white'">Instructors</button>
                 </div>
                 <button @click="logout()" class="text-gray-300 hover:text-white text-sm font-bold">Sign Out</button>
             </div>
@@ -602,24 +593,20 @@
     </nav>
 
     <main class="flex-grow p-4 md:p-8">
-
+        
         <!-- LOGIN VIEW -->
         <template x-if="!isAuthenticated">
-            <div
-                class="max-w-md mx-auto mt-20 p-8 bg-white rounded-xl shadow-lg border border-gray-100 border-t-4 border-brand-highlight">
+            <div class="max-w-md mx-auto mt-20 p-8 bg-white rounded-xl shadow-lg border border-gray-100 border-t-4 border-brand-highlight">
                 <div class="text-center mb-6">
                     <h2 class="text-2xl font-bold text-brand-dark">Master Admin Access</h2>
                     <p class="text-gray-500 text-sm mt-1">Please enter the master dashboard password.</p>
                 </div>
                 <form @submit.prevent="login" class="space-y-4">
                     <div>
-                        <input type="password" x-model="password" required placeholder="Password"
-                            class="w-full p-3 border border-gray-300 rounded focus:border-brand outline-none focus:ring-1 ring-brand text-center">
+                        <input type="password" x-model="password" required placeholder="Password" class="w-full p-3 border border-gray-300 rounded focus:border-brand outline-none focus:ring-1 ring-brand text-center">
                     </div>
                     <p x-show="authError" class="text-red-500 text-sm font-bold text-center" x-text="authError"></p>
-                    <button type="submit"
-                        class="w-full bg-brand-highlight hover:bg-orange-700 text-white font-bold py-3 rounded transition-colors"
-                        :disabled="isLoading">
+                    <button type="submit" class="w-full bg-brand-highlight hover:bg-orange-700 text-white font-bold py-3 rounded transition-colors" :disabled="isLoading">
                         <span x-show="!isLoading">Login</span>
                         <span x-show="isLoading">Verifying...</span>
                     </button>
@@ -632,16 +619,13 @@
             <div class="max-w-6xl mx-auto">
                 <div class="flex justify-between items-center mb-6">
                     <h1 class="text-3xl font-bold text-brand-dark">Master Student List</h1>
-                    <button @click="fetchStudents()"
-                        class="text-sm bg-gray-200 hover:bg-gray-300 text-gray-700 px-3 py-1 rounded font-bold shadow-sm transition-colors">↻
-                        Refresh</button>
+                    <button @click="fetchStudents()" class="text-sm bg-gray-200 hover:bg-gray-300 text-gray-700 px-3 py-1 rounded font-bold shadow-sm transition-colors">↻ Refresh</button>
                 </div>
                 <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
                     <div class="overflow-x-auto">
                         <table class="w-full text-left border-collapse">
                             <thead>
-                                <tr
-                                    class="bg-gray-50 text-gray-500 text-sm uppercase tracking-wider border-b border-gray-200">
+                                <tr class="bg-gray-50 text-gray-500 text-sm uppercase tracking-wider border-b border-gray-200">
                                     <th class="p-4 font-bold">Student Email</th>
                                     <th class="p-4 font-bold">Location</th>
                                     <th class="p-4 font-bold">Assigned Instructor</th>
@@ -653,24 +637,16 @@
                                 <template x-for="student in students" :key="student.id">
                                     <tr class="hover:bg-gray-50 transition-colors">
                                         <td class="p-4 font-bold text-brand-dark" x-text="student.email"></td>
-                                        <td class="p-4 text-sm text-gray-600"
-                                            x-text="(student.country || 'N/A') + (student.zipcode ? ' (' + student.zipcode + ')' : '')">
-                                        </td>
-                                        <td class="p-4 text-sm font-bold"
-                                            :class="student.assigned_instructor ? 'text-brand' : 'text-orange-500'"
-                                            x-text="getInstructorName(student.assigned_instructor)"></td>
-                                        <td class="p-4 text-sm text-gray-600" x-text="formatDate(student.created_at)">
-                                        </td>
+                                        <td class="p-4 text-sm text-gray-600" x-text="(student.country || 'N/A') + (student.zipcode ? ' (' + student.zipcode + ')' : '')"></td>
+                                        <td class="p-4 text-sm font-bold" :class="student.assigned_instructor ? 'text-brand' : 'text-orange-500'" x-text="getInstructorName(student.assigned_instructor)"></td>
+                                        <td class="p-4 text-sm text-gray-600" x-text="formatDate(student.created_at)"></td>
                                         <td class="p-4 text-right">
-                                            <button @click="viewStudent(student.id)"
-                                                class="text-brand hover:text-brand-highlight font-bold text-sm bg-white border border-gray-200 hover:border-brand-highlight px-4 py-1 rounded transition-colors shadow-sm">View
-                                                Details &rarr;</button>
+                                            <button @click="viewStudent(student.id)" class="text-brand hover:text-brand-highlight font-bold text-sm bg-white border border-gray-200 hover:border-brand-highlight px-4 py-1 rounded transition-colors shadow-sm">View Details &rarr;</button>
                                         </td>
                                     </tr>
                                 </template>
                                 <tr x-show="students.length === 0">
-                                    <td colspan="5" class="p-8 text-center text-gray-400 italic font-bold">No students
-                                        have registered yet.</td>
+                                    <td colspan="5" class="p-8 text-center text-gray-400 italic font-bold">No students have registered yet.</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -682,117 +658,82 @@
         <!-- PROGRESS TAB: STUDENT DETAILS VIEW -->
         <template x-if="isAuthenticated && currentTab === 'progress' && selectedStudent">
             <div class="max-w-4xl mx-auto">
-                <button @click="goBack()"
-                    class="mb-6 text-sm font-bold text-gray-500 hover:text-brand flex items-center gap-2">
+                <button @click="goBack()" class="mb-6 text-sm font-bold text-gray-500 hover:text-brand flex items-center gap-2">
                     &larr; Back to Student List
                 </button>
-
+                
                 <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200 mb-8 border-t-4 border-t-brand">
-                    <div class="flex flex-col md:flex-row md:justify-between md:items-start gap-4">
+                    <div class="flex justify-between items-start">
                         <div>
                             <h2 class="text-2xl font-bold text-brand-dark" x-text="selectedStudent.email"></h2>
-                            <p class="text-gray-500 text-sm mt-1">Phone: <span class="font-bold"
-                                    x-text="selectedStudent.phone || 'N/A'"></span> &bull; Location: <span
-                                    class="font-bold"
-                                    x-text="(selectedStudent.country || 'N/A') + (selectedStudent.zipcode ? ' (' + selectedStudent.zipcode + ')' : '')"></span>
-                                &bull; Registered: <span x-text="formatDate(selectedStudent.created_at)"></span></p>
+                            <p class="text-gray-500 text-sm mt-1">Phone: <span class="font-bold" x-text="selectedStudent.phone || 'N/A'"></span> &bull; Location: <span class="font-bold" x-text="(selectedStudent.country || 'N/A') + (selectedStudent.zipcode ? ' (' + selectedStudent.zipcode + ')' : '')"></span> &bull; Registered: <span x-text="formatDate(selectedStudent.created_at)"></span></p>
                         </div>
-
-                        <!-- THE MASTER ADMIN DROPDOWN (Now with Unknown Fallback built-in) -->
-                        <div class="bg-gray-50 p-4 rounded border border-gray-200 w-full md:w-auto shadow-sm">
-                            <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Assigned
-                                Instructor</label>
-                            <div class="flex items-center gap-2">
-                                <select x-model="selectedStudent.assigned_instructor"
-                                    class="p-2 text-sm border border-gray-300 rounded bg-white outline-none focus:border-brand w-full md:w-64 font-bold text-brand shadow-sm">
-                                    <option value="">-- Unassigned --</option>
-                                    <template x-for="inst in instructors" :key="inst.id">
-                                        <option :value="inst.email" x-text="inst.name"></option>
-                                    </template>
-                                    <!-- This line prevents the dropdown from breaking if the assigned email isn't in your official instructors list! -->
-                                    <template
-                                        x-if="selectedStudent.assigned_instructor && !instructors.find(i => i.email.toLowerCase() === selectedStudent.assigned_instructor.toLowerCase())">
-                                        <option :value="selectedStudent.assigned_instructor"
-                                            x-text="'Unknown (' + selectedStudent.assigned_instructor + ')'"></option>
-                                    </template>
-                                </select>
-                                <button
-                                    @click="assignInstructor(selectedStudent.id, selectedStudent.assigned_instructor)"
-                                    class="bg-brand text-white px-3 py-2 rounded text-sm font-bold hover:bg-brand-dark transition-colors">Save</button>
-                            </div>
+                        
+                        <!-- Manual Assignment Dropdown -->
+                        <div class="bg-gray-50 p-3 rounded border border-gray-200">
+                            <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Assigned Instructor</label>
+                            <select x-model="selectedStudent.assigned_instructor" @change="assignInstructor(selectedStudent.id, selectedStudent.assigned_instructor)" class="p-1 text-sm border border-gray-300 rounded bg-white outline-none focus:border-brand w-48 font-bold text-brand">
+                                <option value="">-- Unassigned --</option>
+                                <template x-for="inst in instructors" :key="inst.id">
+                                    <option :value="inst.email" x-text="inst.name"></option>
+                                </template>
+                                <!-- This template ensures that if an instructor is assigned but not in the list, it doesn't default back to Unassigned -->
+                                <template x-if="selectedStudent.assigned_instructor && !instructors.find(i => i.email.toLowerCase() === selectedStudent.assigned_instructor.toLowerCase())">
+                                    <option :value="selectedStudent.assigned_instructor" x-text="'Unknown (' + selectedStudent.assigned_instructor + ')'"></option>
+                                </template>
+                            </select>
                         </div>
                     </div>
                 </div>
 
                 <div class="space-y-6">
-                    <template x-for="prog in studentProgress" :key="prog.course_id + '_' + prog.lesson_id">
+                    <template x-for="prog in studentProgress" :key="prog.lesson_id">
                         <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
                             <div class="bg-gray-50 p-4 border-b border-gray-200 flex justify-between items-center">
-                                <h3 class="font-bold text-brand-dark text-lg">
-                                    <span
-                                        x-text="prog.course_id === 'redemption' ? 'Redemption Series' : prog.course_id"
-                                        class="text-xs uppercase tracking-widest text-brand-highlight mr-2"></span>
-                                    Lesson <span x-text="prog.lesson_id"></span>
-                                </h3>
+                                <h3 class="font-bold text-brand-dark text-lg">Lesson <span x-text="prog.lesson_id"></span></h3>
                                 <div class="flex items-center gap-3">
-                                    <span class="text-xs text-gray-400 italic"
-                                        x-text="'Last saved: ' + formatDate(prog.last_updated)"></span>
-                                    <span x-show="prog.is_completed"
-                                        class="bg-brand-accent/20 text-brand-dark text-xs px-3 py-1 rounded-full font-bold uppercase tracking-wide">✓
-                                        Completed</span>
+                                    <span class="text-xs text-gray-400 italic" x-text="'Last saved: ' + formatDate(prog.last_updated)"></span>
+                                    <span x-show="prog.is_completed" class="bg-brand-accent/20 text-brand-dark text-xs px-3 py-1 rounded-full font-bold uppercase tracking-wide">✓ Completed</span>
                                 </div>
                             </div>
-
+                            
                             <div class="p-6">
                                 <!-- Quiz Grading Block -->
-                                <h4 class="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">Quiz
-                                    Responses</h4>
+                                <h4 class="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">Quiz Responses</h4>
                                 <div class="space-y-4 mb-8">
                                     <template x-for="(q, i) in parseQuiz(prog.lesson_id, prog.quiz_data)" :key="'q'+i">
-                                        <div class="bg-gray-50 p-4 rounded border-l-4 border-gray-100"
-                                            :class="q.correct ? 'border-l-green-500' : 'border-l-red-500'">
+                                        <div class="bg-gray-50 p-4 rounded border-l-4 border-gray-100" :class="q.correct ? 'border-l-green-500' : 'border-l-red-500'">
                                             <div class="flex justify-between items-start mb-2">
                                                 <p class="text-xs font-bold text-brand uppercase" x-text="q.type"></p>
-                                                <span class="text-xs font-bold px-2 py-1 rounded"
-                                                    :class="q.correct ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'"
-                                                    x-text="q.correct ? '✓ Correct' : '✗ Incorrect'"></span>
+                                                <span class="text-xs font-bold px-2 py-1 rounded" :class="q.correct ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'" x-text="q.correct ? '✓ Correct' : '✗ Incorrect'"></span>
                                             </div>
                                             <p class="font-medium text-gray-800 mb-2" x-text="q.question"></p>
-                                            <p class="text-sm text-gray-700">Student Answer: <strong
-                                                    x-text="q.answer"></strong></p>
-                                            <p x-show="!q.correct" class="text-sm text-gray-500 mt-1">Correct Answer:
-                                                <span x-text="q.expected"></span>
-                                            </p>
+                                            <p class="text-sm text-gray-700">Student Answer: <strong x-text="q.answer"></strong></p>
+                                            <p x-show="!q.correct" class="text-sm text-gray-500 mt-1">Correct Answer: <span x-text="q.expected"></span></p>
                                         </div>
                                     </template>
-                                    <div x-show="parseQuiz(prog.lesson_id, prog.quiz_data).length === 0"
-                                        class="text-gray-400 italic text-sm">
+                                    <div x-show="parseQuiz(prog.lesson_id, prog.quiz_data).length === 0" class="text-gray-400 italic text-sm">
                                         No quiz data available for this lesson.
                                     </div>
                                 </div>
 
                                 <!-- Deeper Connections Block -->
-                                <h4
-                                    class="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4 border-t border-gray-100 pt-6">
-                                    Deeper Connections</h4>
+                                <h4 class="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4 border-t border-gray-100 pt-6">Deeper Connections</h4>
                                 <div class="space-y-4">
                                     <template x-for="j in parseJournal(prog.journal_data)" :key="j.q">
                                         <div class="bg-blue-50/30 p-4 rounded border-l-4 border-brand-light">
-                                            <p class="text-xs font-bold text-brand mb-2">Response <span
-                                                    x-text="j.q"></span>:</p>
+                                            <p class="text-xs font-bold text-brand mb-2">Response <span x-text="j.q"></span>:</p>
                                             <p class="serif-text text-gray-700 leading-relaxed" x-text="j.a"></p>
                                         </div>
                                     </template>
-                                    <div x-show="parseJournal(prog.journal_data).length === 0"
-                                        class="text-gray-400 italic text-sm">
+                                    <div x-show="parseJournal(prog.journal_data).length === 0" class="text-gray-400 italic text-sm">
                                         No deeper connections saved for this lesson yet.
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </template>
-                    <div x-show="studentProgress.length === 0"
-                        class="bg-white p-8 rounded-xl shadow-sm text-center text-gray-500 border border-gray-100">
+                    <div x-show="studentProgress.length === 0" class="bg-white p-8 rounded-xl shadow-sm text-center text-gray-500 border border-gray-100">
                         This student hasn't started any lessons yet.
                     </div>
                 </div>
@@ -803,26 +744,22 @@
         <template x-if="isAuthenticated && currentTab === 'manage'">
             <div class="max-w-5xl mx-auto space-y-8">
                 <h1 class="text-3xl font-bold text-brand-dark mb-6">Manage Students</h1>
-
+                
                 <!-- Add Student Form -->
                 <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
                     <h2 class="text-xl font-bold text-brand-dark mb-4">Add New Student</h2>
-                    <form @submit.prevent="addStudent"
-                        class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4 items-end">
+                    <form @submit.prevent="addStudent" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4 items-end">
                         <div class="lg:col-span-1">
                             <label class="block text-xs font-bold text-gray-500 mb-1">Student Email</label>
-                            <input type="email" x-model="newStudentEmail" required
-                                class="w-full p-2 border border-gray-300 rounded focus:border-brand outline-none focus:ring-1 ring-brand text-sm">
+                            <input type="email" x-model="newStudentEmail" required class="w-full p-2 border border-gray-300 rounded focus:border-brand outline-none focus:ring-1 ring-brand text-sm">
                         </div>
                         <div class="lg:col-span-1">
                             <label class="block text-xs font-bold text-gray-500 mb-1">Phone (Optional)</label>
-                            <input type="tel" x-model="newStudentPhone"
-                                class="w-full p-2 border border-gray-300 rounded focus:border-brand outline-none focus:ring-1 ring-brand text-sm">
+                            <input type="tel" x-model="newStudentPhone" class="w-full p-2 border border-gray-300 rounded focus:border-brand outline-none focus:ring-1 ring-brand text-sm">
                         </div>
                         <div class="lg:col-span-1">
                             <label class="block text-xs font-bold text-gray-500 mb-1">Country</label>
-                            <select x-model="newStudentCountry"
-                                class="w-full p-2 border border-gray-300 rounded focus:border-brand outline-none focus:ring-1 ring-brand bg-white text-sm">
+                            <select x-model="newStudentCountry" class="w-full p-2 border border-gray-300 rounded focus:border-brand outline-none focus:ring-1 ring-brand bg-white text-sm">
                                 <template x-for="c in countryList" :key="c">
                                     <option :value="c" x-text="c"></option>
                                 </template>
@@ -830,24 +767,18 @@
                         </div>
                         <div class="lg:col-span-1">
                             <label class="block text-xs font-bold text-gray-500 mb-1">Zip / Postal</label>
-                            <input type="text" x-model="newStudentZipcode"
-                                class="w-full p-2 border border-gray-300 rounded focus:border-brand outline-none focus:ring-1 ring-brand text-sm">
+                            <input type="text" x-model="newStudentZipcode" class="w-full p-2 border border-gray-300 rounded focus:border-brand outline-none focus:ring-1 ring-brand text-sm">
                         </div>
                         <div class="lg:col-span-1">
                             <label class="block text-xs font-bold text-gray-500 mb-1">Temporary Password</label>
-                            <input type="password" x-model="newStudentPassword" required
-                                class="w-full p-2 border border-gray-300 rounded focus:border-brand outline-none focus:ring-1 ring-brand text-sm">
+                            <input type="password" x-model="newStudentPassword" required class="w-full p-2 border border-gray-300 rounded focus:border-brand outline-none focus:ring-1 ring-brand text-sm">
                         </div>
                         <div class="lg:col-span-1">
-                            <button type="submit"
-                                class="w-full bg-brand hover:bg-brand-dark text-white font-bold py-2 px-4 rounded transition-colors shadow-sm text-sm">Add
-                                Student</button>
+                            <button type="submit" class="w-full bg-brand hover:bg-brand-dark text-white font-bold py-2 px-4 rounded transition-colors shadow-sm text-sm">Add Student</button>
                         </div>
                     </form>
-                    <p x-show="newStudentError" class="text-red-500 text-sm font-bold mt-2" x-text="newStudentError">
-                    </p>
-                    <p x-show="newStudentSuccess" class="text-green-600 text-sm font-bold mt-2"
-                        x-text="newStudentSuccess"></p>
+                    <p x-show="newStudentError" class="text-red-500 text-sm font-bold mt-2" x-text="newStudentError"></p>
+                    <p x-show="newStudentSuccess" class="text-green-600 text-sm font-bold mt-2" x-text="newStudentSuccess"></p>
                 </div>
 
                 <!-- Student Management Table -->
@@ -855,8 +786,7 @@
                     <div class="overflow-x-auto">
                         <table class="w-full text-left border-collapse">
                             <thead>
-                                <tr
-                                    class="bg-gray-50 text-gray-500 text-sm uppercase tracking-wider border-b border-gray-200">
+                                <tr class="bg-gray-50 text-gray-500 text-sm uppercase tracking-wider border-b border-gray-200">
                                     <th class="p-4 font-bold">Student Email</th>
                                     <th class="p-4 font-bold">Phone Number</th>
                                     <th class="p-4 font-bold">Location</th>
@@ -868,89 +798,57 @@
                                     <tr class="hover:bg-gray-50 transition-colors">
                                         <td class="p-4 font-bold text-brand-dark" x-text="student.email"></td>
                                         <td class="p-4 text-sm text-gray-600" x-text="student.phone || 'N/A'"></td>
-                                        <td class="p-4 text-sm text-gray-600"
-                                            x-text="(student.country || 'N/A') + (student.zipcode ? ' (' + student.zipcode + ')' : '')">
-                                        </td>
+                                        <td class="p-4 text-sm text-gray-600" x-text="(student.country || 'N/A') + (student.zipcode ? ' (' + student.zipcode + ')' : '')"></td>
                                         <td class="p-4 text-right space-x-2">
-
+                                            
                                             <!-- Password Update Inline Form -->
-                                            <span x-show="updatePasswordId === student.id"
-                                                class="inline-flex items-center gap-2">
-                                                <input type="text" x-model="updatePasswordValue"
-                                                    placeholder="New Password"
-                                                    class="p-1 text-sm border border-gray-300 rounded w-32">
-                                                <button @click="updatePassword()"
-                                                    class="bg-brand-accent text-white px-2 py-1 rounded text-xs font-bold hover:bg-green-600 transition-colors">Save</button>
-                                                <button @click="updatePasswordId = null"
-                                                    class="text-gray-400 hover:text-gray-600 text-xs font-bold">Cancel</button>
+                                            <span x-show="updatePasswordId === student.id" class="inline-flex items-center gap-2">
+                                                <input type="text" x-model="updatePasswordValue" placeholder="New Password" class="p-1 text-sm border border-gray-300 rounded w-32">
+                                                <button @click="updatePassword()" class="bg-brand-accent text-white px-2 py-1 rounded text-xs font-bold hover:bg-green-600 transition-colors">Save</button>
+                                                <button @click="updatePasswordId = null" class="text-gray-400 hover:text-gray-600 text-xs font-bold">Cancel</button>
                                             </span>
 
                                             <!-- Phone Update Inline Form -->
-                                            <span x-show="updatePhoneId === student.id"
-                                                class="inline-flex items-center gap-2">
-                                                <input type="tel" x-model="updatePhoneValue" placeholder="New Phone"
-                                                    class="p-1 text-sm border border-gray-300 rounded w-32">
-                                                <button @click="updatePhone()"
-                                                    class="bg-brand-accent text-white px-2 py-1 rounded text-xs font-bold hover:bg-green-600 transition-colors">Save</button>
-                                                <button @click="updatePhoneId = null"
-                                                    class="text-gray-400 hover:text-gray-600 text-xs font-bold">Cancel</button>
+                                            <span x-show="updatePhoneId === student.id" class="inline-flex items-center gap-2">
+                                                <input type="tel" x-model="updatePhoneValue" placeholder="New Phone" class="p-1 text-sm border border-gray-300 rounded w-32">
+                                                <button @click="updatePhone()" class="bg-brand-accent text-white px-2 py-1 rounded text-xs font-bold hover:bg-green-600 transition-colors">Save</button>
+                                                <button @click="updatePhoneId = null" class="text-gray-400 hover:text-gray-600 text-xs font-bold">Cancel</button>
                                             </span>
 
                                             <!-- Location Update Inline Form -->
-                                            <span x-show="updateLocationId === student.id"
-                                                class="inline-flex items-center gap-2">
-                                                <select x-model="updateCountryValue"
-                                                    class="p-1 text-sm border border-gray-300 rounded w-32 bg-white">
+                                            <span x-show="updateLocationId === student.id" class="inline-flex items-center gap-2">
+                                                <select x-model="updateCountryValue" class="p-1 text-sm border border-gray-300 rounded w-32 bg-white">
                                                     <template x-for="c in countryList" :key="c">
                                                         <option :value="c" x-text="c"></option>
                                                     </template>
                                                 </select>
-                                                <input type="text" x-model="updateZipcodeValue"
-                                                    placeholder="Zip / Postal"
-                                                    class="p-1 text-sm border border-gray-300 rounded w-24">
-                                                <button @click="updateLocation()"
-                                                    class="bg-brand-accent text-white px-2 py-1 rounded text-xs font-bold hover:bg-green-600 transition-colors">Save</button>
-                                                <button @click="updateLocationId = null"
-                                                    class="text-gray-400 hover:text-gray-600 text-xs font-bold">Cancel</button>
+                                                <input type="text" x-model="updateZipcodeValue" placeholder="Zip / Postal" class="p-1 text-sm border border-gray-300 rounded w-24">
+                                                <button @click="updateLocation()" class="bg-brand-accent text-white px-2 py-1 rounded text-xs font-bold hover:bg-green-600 transition-colors">Save</button>
+                                                <button @click="updateLocationId = null" class="text-gray-400 hover:text-gray-600 text-xs font-bold">Cancel</button>
                                             </span>
 
                                             <!-- Action Buttons -->
-                                            <span
-                                                x-show="updatePasswordId !== student.id && updatePhoneId !== student.id && updateLocationId !== student.id">
-                                                <button
-                                                    @click="startLocationUpdate(student.id, student.country, student.zipcode)"
-                                                    class="text-brand hover:text-brand-highlight text-sm font-bold px-2 py-1 border border-gray-200 hover:border-brand-highlight rounded transition-colors shadow-sm bg-white">Location</button>
-                                                <button @click="startPhoneUpdate(student.id, student.phone)"
-                                                    class="text-brand hover:text-brand-highlight text-sm font-bold px-2 py-1 border border-gray-200 hover:border-brand-highlight rounded transition-colors shadow-sm bg-white ml-1">Phone</button>
-                                                <button @click="startPasswordUpdate(student.id)"
-                                                    class="text-brand hover:text-brand-highlight text-sm font-bold px-2 py-1 border border-gray-200 hover:border-brand-highlight rounded transition-colors shadow-sm bg-white ml-1">Password</button>
-                                                <button @click="deleteStudent(student.id, student.email)"
-                                                    class="text-red-500 hover:text-white hover:bg-red-500 text-sm font-bold px-2 py-1 border border-red-200 rounded transition-colors shadow-sm bg-white ml-1">Delete</button>
+                                            <span x-show="updatePasswordId !== student.id && updatePhoneId !== student.id && updateLocationId !== student.id">
+                                                <button @click="startLocationUpdate(student.id, student.country, student.zipcode)" class="text-brand hover:text-brand-highlight text-sm font-bold px-2 py-1 border border-gray-200 hover:border-brand-highlight rounded transition-colors shadow-sm bg-white">Location</button>
+                                                <button @click="startPhoneUpdate(student.id, student.phone)" class="text-brand hover:text-brand-highlight text-sm font-bold px-2 py-1 border border-gray-200 hover:border-brand-highlight rounded transition-colors shadow-sm bg-white ml-1">Phone</button>
+                                                <button @click="startPasswordUpdate(student.id)" class="text-brand hover:text-brand-highlight text-sm font-bold px-2 py-1 border border-gray-200 hover:border-brand-highlight rounded transition-colors shadow-sm bg-white ml-1">Password</button>
+                                                <button @click="deleteStudent(student.id, student.email)" class="text-red-500 hover:text-white hover:bg-red-500 text-sm font-bold px-2 py-1 border border-red-200 rounded transition-colors shadow-sm bg-white ml-1">Delete</button>
                                             </span>
-
+                                            
                                             <!-- Success/Error Messages for this row -->
-                                            <div x-show="updatePasswordId === student.id && updatePasswordError"
-                                                class="text-red-500 text-xs mt-1" x-text="updatePasswordError"></div>
-                                            <div x-show="updatePasswordId === student.id && updatePasswordSuccess"
-                                                class="text-green-600 text-xs mt-1" x-text="updatePasswordSuccess">
-                                            </div>
+                                            <div x-show="updatePasswordId === student.id && updatePasswordError" class="text-red-500 text-xs mt-1" x-text="updatePasswordError"></div>
+                                            <div x-show="updatePasswordId === student.id && updatePasswordSuccess" class="text-green-600 text-xs mt-1" x-text="updatePasswordSuccess"></div>
 
-                                            <div x-show="updatePhoneId === student.id && updatePhoneError"
-                                                class="text-red-500 text-xs mt-1" x-text="updatePhoneError"></div>
-                                            <div x-show="updatePhoneId === student.id && updatePhoneSuccess"
-                                                class="text-green-600 text-xs mt-1" x-text="updatePhoneSuccess"></div>
+                                            <div x-show="updatePhoneId === student.id && updatePhoneError" class="text-red-500 text-xs mt-1" x-text="updatePhoneError"></div>
+                                            <div x-show="updatePhoneId === student.id && updatePhoneSuccess" class="text-green-600 text-xs mt-1" x-text="updatePhoneSuccess"></div>
 
-                                            <div x-show="updateLocationId === student.id && updateLocationError"
-                                                class="text-red-500 text-xs mt-1" x-text="updateLocationError"></div>
-                                            <div x-show="updateLocationId === student.id && updateLocationSuccess"
-                                                class="text-green-600 text-xs mt-1" x-text="updateLocationSuccess">
-                                            </div>
+                                            <div x-show="updateLocationId === student.id && updateLocationError" class="text-red-500 text-xs mt-1" x-text="updateLocationError"></div>
+                                            <div x-show="updateLocationId === student.id && updateLocationSuccess" class="text-green-600 text-xs mt-1" x-text="updateLocationSuccess"></div>
                                         </td>
                                     </tr>
                                 </template>
                                 <tr x-show="students.length === 0">
-                                    <td colspan="4" class="p-8 text-center text-gray-400 italic font-bold">No students
-                                        found.</td>
+                                    <td colspan="4" class="p-8 text-center text-gray-400 italic font-bold">No students found.</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -969,58 +867,42 @@
                         <span x-show="instructorError" class="text-red-500" x-text="instructorError"></span>
                     </div>
                 </div>
-
+                
                 <!-- Add/Edit Instructor Form -->
                 <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-                    <h2 class="text-xl font-bold text-brand-dark mb-4"
-                        x-text="isEditingInstructor ? 'Edit Instructor' : 'Add New Instructor'"></h2>
-                    <form @submit.prevent="submitInstructorForm"
-                        class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 items-end">
+                    <h2 class="text-xl font-bold text-brand-dark mb-4" x-text="editingInstructorIndex !== null ? 'Edit Instructor' : 'Add New Instructor'"></h2>
+                    <form @submit.prevent="submitInstructorForm" class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 items-end">
                         <div>
                             <label class="block text-xs font-bold text-gray-500 mb-1">Name</label>
-                            <input type="text" x-model="instructorForm.name" required
-                                class="w-full p-2 border border-gray-300 rounded focus:border-brand outline-none focus:ring-1 ring-brand text-sm">
+                            <input type="text" x-model="instructorForm.name" required class="w-full p-2 border border-gray-300 rounded focus:border-brand outline-none focus:ring-1 ring-brand text-sm">
                         </div>
                         <div>
                             <label class="block text-xs font-bold text-gray-500 mb-1">Email</label>
-                            <input type="email" x-model="instructorForm.email" required
-                                class="w-full p-2 border border-gray-300 rounded focus:border-brand outline-none focus:ring-1 ring-brand text-sm">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-bold text-gray-500 mb-1">
-                                Password <span x-show="isEditingInstructor" class="text-gray-400 font-normal">(Leave
-                                    blank to keep)</span>
-                            </label>
-                            <input type="text" x-model="instructorForm.password" :required="!isEditingInstructor"
-                                placeholder="Set Password"
-                                class="w-full p-2 border border-gray-300 rounded focus:border-brand outline-none focus:ring-1 ring-brand text-sm">
+                            <input type="email" x-model="instructorForm.email" required class="w-full p-2 border border-gray-300 rounded focus:border-brand outline-none focus:ring-1 ring-brand text-sm">
                         </div>
                         <div>
                             <label class="block text-xs font-bold text-gray-500 mb-1">City</label>
-                            <input type="text" x-model="instructorForm.city" required
-                                class="w-full p-2 border border-gray-300 rounded focus:border-brand outline-none focus:ring-1 ring-brand text-sm">
+                            <input type="text" x-model="instructorForm.city" required class="w-full p-2 border border-gray-300 rounded focus:border-brand outline-none focus:ring-1 ring-brand text-sm">
                         </div>
                         <div>
                             <label class="block text-xs font-bold text-gray-500 mb-1">State / Province</label>
-                            <input type="text" x-model="instructorForm.state" required
-                                class="w-full p-2 border border-gray-300 rounded focus:border-brand outline-none focus:ring-1 ring-brand text-sm">
+                            <input type="text" x-model="instructorForm.state" required class="w-full p-2 border border-gray-300 rounded focus:border-brand outline-none focus:ring-1 ring-brand text-sm">
                         </div>
                         <div>
                             <label class="block text-xs font-bold text-gray-500 mb-1">Latitude</label>
-                            <input type="text" x-model="instructorForm.lat" @focus="geocodeInstructor()" required
-                                class="w-full p-2 border border-gray-300 rounded focus:border-brand outline-none focus:ring-1 ring-brand text-sm">
+                            <input type="text" x-model="instructorForm.lat" required class="w-full p-2 border border-gray-300 rounded focus:border-brand outline-none focus:ring-1 ring-brand text-sm">
                         </div>
                         <div>
                             <label class="block text-xs font-bold text-gray-500 mb-1">Longitude</label>
-                            <input type="text" x-model="instructorForm.long" @focus="geocodeInstructor()" required
-                                class="w-full p-2 border border-gray-300 rounded focus:border-brand outline-none focus:ring-1 ring-brand text-sm">
+                            <input type="text" x-model="instructorForm.long" required class="w-full p-2 border border-gray-300 rounded focus:border-brand outline-none focus:ring-1 ring-brand text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-500 mb-1">Zone</label>
+                            <input type="text" x-model="instructorForm.zone" class="w-full p-2 border border-gray-300 rounded focus:border-brand outline-none focus:ring-1 ring-brand text-sm">
                         </div>
                         <div class="flex gap-2">
-                            <button type="submit"
-                                class="w-full bg-brand hover:bg-brand-dark text-white font-bold py-2 px-4 rounded transition-colors shadow-sm text-sm"
-                                x-text="isEditingInstructor ? 'Save' : 'Add'"></button>
-                            <button type="button" x-show="isEditingInstructor" @click="cancelInstructorEdit()"
-                                class="w-full bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-2 px-4 rounded transition-colors shadow-sm text-sm">Cancel</button>
+                            <button type="submit" class="w-full bg-brand hover:bg-brand-dark text-white font-bold py-2 px-4 rounded transition-colors shadow-sm text-sm" x-text="editingInstructorIndex !== null ? 'Save' : 'Add'"></button>
+                            <button type="button" x-show="editingInstructorIndex !== null" @click="cancelInstructorEdit()" class="w-full bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-2 px-4 rounded transition-colors shadow-sm text-sm">Cancel</button>
                         </div>
                     </form>
                 </div>
@@ -1030,35 +912,31 @@
                     <div class="overflow-x-auto">
                         <table class="w-full text-left border-collapse">
                             <thead>
-                                <tr
-                                    class="bg-gray-50 text-gray-500 text-sm uppercase tracking-wider border-b border-gray-200">
+                                <tr class="bg-gray-50 text-gray-500 text-sm uppercase tracking-wider border-b border-gray-200">
                                     <th class="p-4 font-bold">Name</th>
-                                    <th class="p-4 font-bold">Email (Login)</th>
+                                    <th class="p-4 font-bold">Email</th>
                                     <th class="p-4 font-bold">Location</th>
                                     <th class="p-4 font-bold">Coordinates</th>
+                                    <th class="p-4 font-bold">Zone</th>
                                     <th class="p-4 font-bold text-right">Actions</th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-gray-100">
-                                <template x-for="inst in instructors" :key="inst.id">
+                                <template x-for="(inst, index) in instructors" :key="index">
                                     <tr class="hover:bg-gray-50 transition-colors">
                                         <td class="p-4 font-bold text-brand-dark" x-text="inst.name"></td>
-                                        <td class="p-4 text-sm text-brand font-bold" x-text="inst.email"></td>
-                                        <td class="p-4 text-sm text-gray-600" x-text="inst.city + ', ' + inst.state">
-                                        </td>
-                                        <td class="p-4 text-xs text-gray-400 font-mono"
-                                            x-text="inst.lat + ', ' + inst.long"></td>
+                                        <td class="p-4 text-sm text-gray-600" x-text="inst.email"></td>
+                                        <td class="p-4 text-sm text-gray-600" x-text="inst.city + ', ' + inst.state"></td>
+                                        <td class="p-4 text-xs text-gray-400 font-mono" x-text="inst.lat + ', ' + inst.long"></td>
+                                        <td class="p-4 text-sm text-gray-600" x-text="inst.zone"></td>
                                         <td class="p-4 text-right space-x-2">
-                                            <button @click="editInstructor(inst)"
-                                                class="text-brand hover:text-brand-highlight text-sm font-bold px-3 py-1 border border-gray-200 hover:border-brand-highlight rounded transition-colors shadow-sm bg-white">Edit</button>
-                                            <button @click="deleteInstructor(inst.id, inst.name)"
-                                                class="text-red-500 hover:text-white hover:bg-red-500 text-sm font-bold px-3 py-1 border border-red-200 rounded transition-colors shadow-sm bg-white ml-2">Delete</button>
+                                            <button @click="editInstructor(index)" class="text-brand hover:text-brand-highlight text-sm font-bold px-3 py-1 border border-gray-200 hover:border-brand-highlight rounded transition-colors shadow-sm bg-white">Edit</button>
+                                            <button @click="deleteInstructor(index)" class="text-red-500 hover:text-white hover:bg-red-500 text-sm font-bold px-3 py-1 border border-red-200 rounded transition-colors shadow-sm bg-white ml-2">Delete</button>
                                         </td>
                                     </tr>
                                 </template>
                                 <tr x-show="instructors.length === 0">
-                                    <td colspan="5" class="p-8 text-center text-gray-400 italic font-bold">No
-                                        instructors have been added to the database yet.</td>
+                                    <td colspan="6" class="p-8 text-center text-gray-400 italic font-bold">No instructors have been added to the database yet.</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -1069,5 +947,4 @@
 
     </main>
 </body>
-
 </html>
