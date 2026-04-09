@@ -35,7 +35,8 @@ $smtp_pass = 'YourEmailPasswordHere';
 $smtp_port = 465;
 // ----------------------------------------------
 
-function haversineGreatCircleDistance($latitudeFrom, $longitudeFrom, $latitudeTo, $longitudeTo, $earthRadius = 3959) {
+function haversineGreatCircleDistance($latitudeFrom, $longitudeFrom, $latitudeTo, $longitudeTo, $earthRadius = 3959)
+{
     $latFrom = deg2rad($latitudeFrom);
     $lonFrom = deg2rad($longitudeFrom);
     $latTo = deg2rad($latitudeTo);
@@ -50,7 +51,8 @@ function haversineGreatCircleDistance($latitudeFrom, $longitudeFrom, $latitudeTo
     return $angle * $earthRadius;
 }
 
-function send_app_email($to, $subject, $html_message, $reply_to = null) {
+function send_app_email($to, $subject, $html_message, $reply_to = null)
+{
     global $use_smtp, $smtp_host, $smtp_user, $smtp_pass, $smtp_port;
     $from_email = 'no-reply@psbstudies.com';
     $from_name = 'Pure & Simple Bible';
@@ -268,7 +270,7 @@ switch ($data->action) {
                 if (!empty($student_zipcode) && !empty($student_country)) {
                     $query = urlencode(trim($student_zipcode) . ", " . trim($student_country));
                     $url = "https://nominatim.openstreetmap.org/search?q={$query}&format=json&limit=1";
-                    
+
                     $response = false;
                     if (function_exists('curl_init')) {
                         $ch = curl_init();
@@ -280,7 +282,7 @@ switch ($data->action) {
                         $response = curl_exec($ch);
                         curl_close($ch);
                     }
-                    
+
                     if (!$response) {
                         $options = ['http' => ['header' => "User-Agent: PureAndSimpleBible/1.0\r\n", 'timeout' => 5]];
                         $context = stream_context_create($options);
@@ -305,9 +307,9 @@ switch ($data->action) {
                         $closest_preacher = null;
 
                         foreach ($preachers as $preacher) {
-                            $p_lat = isset($preacher['lat']) ? (float)$preacher['lat'] : 0;
-                            $p_lon = isset($preacher['longitude']) ? (float)$preacher['longitude'] : (isset($preacher['long']) ? (float)$preacher['long'] : 0);
-                            
+                            $p_lat = isset($preacher['lat']) ? (float) $preacher['lat'] : 0;
+                            $p_lon = isset($preacher['longitude']) ? (float) $preacher['longitude'] : (isset($preacher['long']) ? (float) $preacher['long'] : 0);
+
                             if ($p_lat != 0 && $p_lon != 0) {
                                 $dist = haversineGreatCircleDistance($student_lat, $student_lon, $p_lat, $p_lon);
                                 if ($dist < $closest_distance) {
@@ -325,7 +327,7 @@ switch ($data->action) {
                             $stmt = $conn->prepare("UPDATE students SET assigned_instructor = ? WHERE id = ?");
                             $stmt->execute([$to, $student_id]);
                         }
-                    } catch(PDOException $e) {
+                    } catch (PDOException $e) {
                         // Fail silently and use default if instructors table has missing columns
                     }
                 }
@@ -354,12 +356,14 @@ switch ($data->action) {
             if ($prog_rec) {
                 if (!empty($prog_rec['quiz_data'])) {
                     $decoded_quiz = json_decode($prog_rec['quiz_data'], true);
-                    if (is_string($decoded_quiz)) $decoded_quiz = json_decode($decoded_quiz, true);
+                    if (is_string($decoded_quiz))
+                        $decoded_quiz = json_decode($decoded_quiz, true);
                     $db_quiz_answers = is_array($decoded_quiz) ? $decoded_quiz : [];
                 }
                 if (!empty($prog_rec['journal_data'])) {
                     $decoded_journal = json_decode($prog_rec['journal_data'], true);
-                    if (is_string($decoded_journal)) $decoded_journal = json_decode($decoded_journal, true);
+                    if (is_string($decoded_journal))
+                        $decoded_journal = json_decode($decoded_journal, true);
                     $db_journal_answers = is_array($decoded_journal) ? $decoded_journal : [];
                 }
             }
@@ -394,8 +398,8 @@ switch ($data->action) {
         ";
 
         $quiz_data = isset($data->quiz) ? $data->quiz : null;
-        $student_answers = !empty($db_quiz_answers) ? $db_quiz_answers : (isset($data->answers) ? (array)$data->answers : []);
-        
+        $student_answers = !empty($db_quiz_answers) ? $db_quiz_answers : (isset($data->answers) ? (array) $data->answers : []);
+
         $total_questions = 0;
         $correct_answers = 0;
         $quiz_html = "<div class='section'>";
@@ -406,47 +410,49 @@ switch ($data->action) {
                 foreach ($quiz_data->true_false as $q) {
                     $total_questions++;
                     $ans = isset($student_answers[$q->id]) ? $student_answers[$q->id] : '';
-                    
+
                     $expected_bool = filter_var($q->answer, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
-                    $expected_str = $expected_bool !== null ? ($expected_bool ? "True" : "False") : (string)$q->answer;
-                    
+                    $expected_str = $expected_bool !== null ? ($expected_bool ? "True" : "False") : (string) $q->answer;
+
                     $ans_bool = filter_var($ans, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
                     if ($ans_bool === null) {
-                        $ans_str = (string)$ans;
+                        $ans_str = (string) $ans;
                     } else {
                         $ans_str = $ans_bool ? "True" : "False";
                     }
-                    
+
                     $is_correct = (strtolower(trim($ans_str)) === strtolower(trim($expected_str)));
-                    if ($is_correct) $correct_answers++;
-                    
+                    if ($is_correct)
+                        $correct_answers++;
+
                     $status_class = $is_correct ? 'correct' : 'incorrect';
                     $status_text = $is_correct ? '✓ Correct' : '✗ Incorrect (Expected: ' . $expected_str . ')';
                     $display_ans = $ans_str === '' ? '<i>No answer</i>' : htmlspecialchars($ans_str);
-                    
+
                     $quiz_html .= "<div>";
                     $quiz_html .= "<div class='q'>" . htmlspecialchars($q->question) . "</div>";
                     $quiz_html .= "<div class='a'>Student Answer: {$display_ans} <span class='{$status_class}'>[{$status_text}]</span></div>";
                     $quiz_html .= "</div>";
                 }
             }
-            
+
             if (isset($quiz_data->fill_blank) && is_array($quiz_data->fill_blank)) {
                 $quiz_html .= "<h3 style='margin-top:15px; color:#0a506e;'>Search the Scriptures</h3>";
                 foreach ($quiz_data->fill_blank as $q) {
                     $total_questions++;
                     $ans = isset($student_answers[$q->id]) ? $student_answers[$q->id] : '';
-                    
-                    $expected_str = (string)$q->answer;
-                    $ans_str = (string)$ans;
-                    
+
+                    $expected_str = (string) $q->answer;
+                    $ans_str = (string) $ans;
+
                     $is_correct = (strtolower(trim($ans_str)) === strtolower(trim($expected_str)));
-                    if ($is_correct) $correct_answers++;
-                    
+                    if ($is_correct)
+                        $correct_answers++;
+
                     $status_class = $is_correct ? 'correct' : 'incorrect';
                     $status_text = $is_correct ? '✓ Correct' : '✗ Incorrect (Expected: ' . htmlspecialchars($expected_str) . ')';
                     $display_ans = $ans_str === '' ? '<i>No answer</i>' : htmlspecialchars($ans_str);
-                    
+
                     $quiz_html .= "<div>";
                     $quiz_html .= "<div class='q'>" . htmlspecialchars($q->verse) . "</div>";
                     $quiz_html .= "<div class='a'>Student Answer: {$display_ans} <span class='{$status_class}'>[{$status_text}]</span></div>";
@@ -469,19 +475,19 @@ switch ($data->action) {
             $clean_journal = [];
 
             foreach ($db_journal_answers as $k => $v) {
-                $clean_key = trim((string)$k);
+                $clean_key = trim((string) $k);
                 if (is_numeric($clean_key)) {
-                    $clean_journal[(int)$clean_key] = $v;
+                    $clean_journal[(int) $clean_key] = $v;
                 }
             }
-            
+
             if (empty($clean_journal) && isset($data->journal)) {
                 $j = is_string($data->journal) ? json_decode($data->journal, true) : json_decode(json_encode($data->journal), true);
                 if (is_array($j)) {
                     foreach ($j as $k => $v) {
-                        $clean_key = trim((string)$k);
-                        if (is_numeric($clean_key) && !isset($clean_journal[(int)$clean_key])) {
-                            $clean_journal[(int)$clean_key] = $v;
+                        $clean_key = trim((string) $k);
+                        if (is_numeric($clean_key) && !isset($clean_journal[(int) $clean_key])) {
+                            $clean_journal[(int) $clean_key] = $v;
                         }
                     }
                 }
@@ -491,25 +497,25 @@ switch ($data->action) {
                 $a = is_string($data->answers) ? json_decode($data->answers, true) : json_decode(json_encode($data->answers), true);
                 if (is_array($a)) {
                     foreach ($a as $k => $v) {
-                        $clean_key = trim((string)$k);
-                        if (is_numeric($clean_key) && !isset($clean_journal[(int)$clean_key])) {
-                            $clean_journal[(int)$clean_key] = $v;
+                        $clean_key = trim((string) $k);
+                        if (is_numeric($clean_key) && !isset($clean_journal[(int) $clean_key])) {
+                            $clean_journal[(int) $clean_key] = $v;
                         }
                     }
                 }
             }
-            
+
             foreach ($data->deeper_connections as $index => $prompt) {
                 $answer = "No response provided.";
-                
-                if (isset($clean_journal[$index]) && trim((string)$clean_journal[$index]) !== '') {
+
+                if (isset($clean_journal[$index]) && trim((string) $clean_journal[$index]) !== '') {
                     $answer = $clean_journal[$index];
-                } elseif (isset($clean_journal[(string)$index]) && trim((string)$clean_journal[(string)$index]) !== '') {
-                    $answer = $clean_journal[(string)$index];
+                } elseif (isset($clean_journal[(string) $index]) && trim((string) $clean_journal[(string) $index]) !== '') {
+                    $answer = $clean_journal[(string) $index];
                 }
-                
-                $message .= "<div class='q'>" . ((int)$index + 1) . ". " . htmlspecialchars((string)$prompt) . "</div>";
-                $message .= "<div class='a'>" . nl2br(htmlspecialchars((string)$answer)) . "</div>";
+
+                $message .= "<div class='q'>" . ((int) $index + 1) . ". " . htmlspecialchars((string) $prompt) . "</div>";
+                $message .= "<div class='a'>" . nl2br(htmlspecialchars((string) $answer)) . "</div>";
             }
         } else {
             $message .= "<p>No deeper connections data found.</p>";
@@ -691,22 +697,22 @@ switch ($data->action) {
         $zipcode = isset($data->zipcode) ? trim($data->zipcode) : null;
 
         if (empty($email) || empty($new_password)) {
-             echo json_encode(["success" => false, "message" => "Email and password are required."]);
-             break;
+            echo json_encode(["success" => false, "message" => "Email and password are required."]);
+            break;
         }
         try {
             $stmt = $conn->prepare("SELECT id FROM students WHERE email = ?");
             $stmt->execute([$email]);
             if ($stmt->fetch()) {
-                 echo json_encode(["success" => false, "message" => "A student with this email already exists."]);
-                 break;
+                echo json_encode(["success" => false, "message" => "A student with this email already exists."]);
+                break;
             }
             $password_hash = password_hash($new_password, PASSWORD_DEFAULT);
             $stmt = $conn->prepare("INSERT INTO students (email, phone, country, zipcode, password_hash) VALUES (?, ?, ?, ?, ?)");
             if ($stmt->execute([$email, $phone, $country, $zipcode, $password_hash])) {
-                 echo json_encode(["success" => true]);
+                echo json_encode(["success" => true]);
             } else {
-                 echo json_encode(["success" => false, "message" => "Database error adding student."]);
+                echo json_encode(["success" => false, "message" => "Database error adding student."]);
             }
         } catch (PDOException $e) {
             echo json_encode(["success" => false, "message" => "SQL Error: " . $e->getMessage()]);
@@ -722,9 +728,9 @@ switch ($data->action) {
         try {
             $stmt = $conn->prepare("DELETE FROM students WHERE id = ?");
             if ($stmt->execute([$student_id])) {
-                 echo json_encode(["success" => true]);
+                echo json_encode(["success" => true]);
             } else {
-                 echo json_encode(["success" => false, "message" => "Database error deleting student."]);
+                echo json_encode(["success" => false, "message" => "Database error deleting student."]);
             }
         } catch (PDOException $e) {
             echo json_encode(["success" => false, "message" => "SQL Error: " . $e->getMessage()]);
@@ -741,9 +747,9 @@ switch ($data->action) {
         try {
             $stmt = $conn->prepare("UPDATE students SET phone = ? WHERE id = ?");
             if ($stmt->execute([$new_phone, $student_id])) {
-                 echo json_encode(["success" => true]);
+                echo json_encode(["success" => true]);
             } else {
-                 echo json_encode(["success" => false, "message" => "Database error updating phone."]);
+                echo json_encode(["success" => false, "message" => "Database error updating phone."]);
             }
         } catch (PDOException $e) {
             echo json_encode(["success" => false, "message" => "SQL Error: " . $e->getMessage()]);
@@ -761,9 +767,9 @@ switch ($data->action) {
         try {
             $stmt = $conn->prepare("UPDATE students SET country = ?, zipcode = ? WHERE id = ?");
             if ($stmt->execute([$new_country, $new_zipcode, $student_id])) {
-                 echo json_encode(["success" => true]);
+                echo json_encode(["success" => true]);
             } else {
-                 echo json_encode(["success" => false, "message" => "Database error updating location."]);
+                echo json_encode(["success" => false, "message" => "Database error updating location."]);
             }
         } catch (PDOException $e) {
             echo json_encode(["success" => false, "message" => "SQL Error: " . $e->getMessage()]);
@@ -778,16 +784,16 @@ switch ($data->action) {
         $student_id = $data->student_id;
         $new_password = $data->new_password;
         if (empty($new_password)) {
-             echo json_encode(["success" => false, "message" => "Password cannot be empty."]);
-             break;
+            echo json_encode(["success" => false, "message" => "Password cannot be empty."]);
+            break;
         }
         try {
             $password_hash = password_hash($new_password, PASSWORD_DEFAULT);
             $stmt = $conn->prepare("UPDATE students SET password_hash = ? WHERE id = ?");
             if ($stmt->execute([$password_hash, $student_id])) {
-                 echo json_encode(["success" => true]);
+                echo json_encode(["success" => true]);
             } else {
-                 echo json_encode(["success" => false, "message" => "Database error updating password."]);
+                echo json_encode(["success" => false, "message" => "Database error updating password."]);
             }
         } catch (PDOException $e) {
             echo json_encode(["success" => false, "message" => "SQL Error: " . $e->getMessage()]);
@@ -823,14 +829,14 @@ switch ($data->action) {
             // Safely fetch all columns. 
             $stmt = $conn->query("SELECT * FROM instructors ORDER BY name ASC");
             $raw_instructors = $stmt->fetchAll(PDO::FETCH_ASSOC);
-            
+
             $instructors = [];
             foreach ($raw_instructors as $inst) {
                 // Prevents SQL crash by dynamically looking for whichever longitude column name exists
                 $inst['long'] = $inst['longitude'] ?? $inst['long'] ?? $inst['lng'] ?? '';
                 $instructors[] = $inst;
             }
-            
+
             echo json_encode(["success" => true, "instructors" => $instructors]);
         } catch (PDOException $e) {
             echo json_encode(["success" => false, "message" => "SQL Error: " . $e->getMessage()]);
@@ -843,24 +849,24 @@ switch ($data->action) {
             break;
         }
         if (empty($data->email) || empty($data->password)) {
-             echo json_encode(["success" => false, "message" => "Email and password are required."]);
-             break;
+            echo json_encode(["success" => false, "message" => "Email and password are required."]);
+            break;
         }
         try {
             $stmt = $conn->prepare("SELECT id FROM instructors WHERE email = ?");
             $stmt->execute([$data->email]);
             if ($stmt->fetch()) {
-                 echo json_encode(["success" => false, "message" => "An instructor with this email already exists."]);
-                 break;
+                echo json_encode(["success" => false, "message" => "An instructor with this email already exists."]);
+                break;
             }
 
             $hash = password_hash($data->password, PASSWORD_DEFAULT);
             $stmt = $conn->prepare("INSERT INTO instructors (name, email, password_hash, city, state, lat, longitude) VALUES (?, ?, ?, ?, ?, ?, ?)");
-            
+
             if ($stmt->execute([$data->name, $data->email, $hash, $data->city, $data->state, $data->lat, $data->long])) {
-                 echo json_encode(["success" => true]);
+                echo json_encode(["success" => true]);
             } else {
-                 echo json_encode(["success" => false, "message" => "Database error adding instructor."]);
+                echo json_encode(["success" => false, "message" => "Database error adding instructor."]);
             }
         } catch (PDOException $e) {
             echo json_encode(["success" => false, "message" => "SQL Error: " . $e->getMessage()]);
@@ -901,9 +907,9 @@ switch ($data->action) {
         try {
             $stmt = $conn->prepare("DELETE FROM instructors WHERE id = ?");
             if ($stmt->execute([$instructor_id])) {
-                 echo json_encode(["success" => true]);
+                echo json_encode(["success" => true]);
             } else {
-                 echo json_encode(["success" => false, "message" => "Database error deleting instructor."]);
+                echo json_encode(["success" => false, "message" => "Database error deleting instructor."]);
             }
         } catch (PDOException $e) {
             echo json_encode(["success" => false, "message" => "SQL Error: " . $e->getMessage()]);
@@ -914,12 +920,12 @@ switch ($data->action) {
     case 'instructor_login':
         $email = trim($data->email);
         $pass = $data->password;
-        
+
         try {
             $stmt = $conn->prepare("SELECT name, password_hash FROM instructors WHERE email = ?");
             $stmt->execute([$email]);
             $inst = $stmt->fetch(PDO::FETCH_ASSOC);
-            
+
             if ($inst && password_verify($pass, $inst['password_hash'])) {
                 echo json_encode(["success" => true, "name" => $inst['name'], "email" => $email]);
             } else {
@@ -932,7 +938,7 @@ switch ($data->action) {
 
     case 'instructor_get_students':
         $email = trim($data->instructor_email);
-        
+
         try {
             $stmt = $conn->prepare("
                 SELECT s.id, s.email, s.phone, s.country, s.zipcode, s.created_at, 
@@ -951,15 +957,15 @@ switch ($data->action) {
     case 'instructor_get_student_details':
         $email = trim($data->instructor_email);
         $student_id = $data->student_id;
-        
+
         try {
             $stmt = $conn->prepare("SELECT id, email, phone, country, zipcode, created_at FROM students WHERE id = ? AND assigned_instructor = ?");
             $stmt->execute([$student_id, $email]);
             $student = $stmt->fetch(PDO::FETCH_ASSOC);
 
-            if (!$student) { 
-                echo json_encode(["success" => false, "message" => "Student not found or not assigned to you."]); 
-                break; 
+            if (!$student) {
+                echo json_encode(["success" => false, "message" => "Student not found or not assigned to you."]);
+                break;
             }
 
             $stmt = $conn->prepare("SELECT course_id, lesson_id, is_completed, journal_data, quiz_data, last_updated FROM student_progress WHERE student_id = ? ORDER BY course_id ASC, lesson_id ASC");
@@ -977,11 +983,11 @@ switch ($data->action) {
         $instructor_name = trim($data->instructor_name);
         $subject_line = trim($data->subject);
         $msg_body = trim($data->message);
-        
+
         $to = $default_admin_email; // Sends to your connect@psbstudies.com
-        
+
         $subject = "Instructor Portal: " . $subject_line;
-        
+
         $message = "
         <html>
         <head><style>
@@ -998,9 +1004,9 @@ switch ($data->action) {
             </div>
         </body></html>
         ";
-        
+
         $mailSent = send_app_email($to, $subject, $message, $instructor_email);
-        
+
         if ($mailSent) {
             echo json_encode(["success" => true]);
         } else {
