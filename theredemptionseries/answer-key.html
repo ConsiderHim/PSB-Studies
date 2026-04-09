@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instructor Answer Key | The Redemption Series</title>
+    <link rel="icon" type="image/png" href="assets/img/rs_roundthorncrown.png">
+
+    <!-- Import Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&family=Merriweather:ital,wght@0,400;0,700;1,400&display=swap"
+        rel="stylesheet">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .serif-text {
+            font-family: 'Merriweather', 'Georgia', serif;
+        }
+
+        .font-roboto {
+            font-family: 'Roboto', sans-serif;
+        }
+
+        .bg-pattern {
+            background-color: #f8fafc;
+            background-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%230a506e' fill-opacity='0.03' fill-rule='evenodd'%3E%3Ccircle cx='3' cy='3' r='3'/%3E%3Ccircle cx='13' cy='13' r='3'/%3E%3C/g%3E%3C/svg%3E");
+        }
+
+        [x-cloak] {
+            display: none !important;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Print Styles */
+        @media print {
+
+            nav,
+            footer,
+            .no-print {
+                display: none !important;
+            }
+
+            body {
+                background: white;
+            }
+
+            /* Let the massive lesson blocks flow naturally across pages to prevent blank spaces */
+            .print-break-inside-avoid {
+                break-inside: auto;
+                page-break-inside: auto;
+            }
+
+            /* Keep headings attached to their paragraphs */
+            h2,
+            h3,
+            h4 {
+                break-after: avoid;
+                page-break-after: avoid;
+            }
+
+            /* Prevent individual questions/boxes from being sliced in half across pages */
+            li {
+                break-inside: avoid;
+                page-break-inside: avoid;
+            }
+        }
+    </style>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            DEFAULT: '#0a506e',
+                            dark: '#1e293b',
+                            light: '#78a0c8',
+                            accent: '#8cbea0',
+                            highlight: '#d2691e'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Alpine.js (Added for the Back to Top button) -->
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+</head>
+
+<body class="bg-pattern min-h-screen flex flex-col font-roboto text-gray-800">
+
+    <!-- Navigation -->
+    <nav class="bg-brand-dark text-white shadow-md sticky top-0 z-50 print:hidden">
+        <div class="max-w-4xl mx-auto px-4 py-4 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <img src="assets/img/rs_roundthorncrown.png" alt="Logo" class="h-8 w-8">
+                <span class="font-bold text-lg tracking-wider hidden sm:inline">INSTRUCTOR ANSWER KEY</span>
+            </div>
+
+            <div class="flex items-center gap-4">
+                <a href="admin.html"
+                    class="text-sm font-bold bg-white/10 hover:bg-white/20 px-3 py-1.5 rounded transition-colors">
+                    &larr; Back to Dashboard
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="flex-grow py-10 px-4">
+        <div class="max-w-4xl mx-auto">
+
+            <div class="text-center mb-10">
+                <h1 class="text-4xl font-black text-brand-dark uppercase tracking-tight mb-2">Master Answer Key</h1>
+                <p class="text-gray-500 serif-text">The Redemption Series • Lessons 1-6</p>
+
+                <button onclick="window.print()"
+                    class="mt-6 bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-2 px-6 rounded text-sm transition-colors no-print flex items-center gap-2 mx-auto">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z">
+                        </path>
+                    </svg>
+                    Print Answer Key
+                </button>
+
+                <!-- Quick Jump Links (Hidden during print) -->
+                <div class="flex flex-wrap justify-center gap-2 mt-8 no-print">
+                    <a href="#lesson-1"
+                        class="text-xs font-bold uppercase tracking-wider text-brand hover:text-white border border-brand hover:bg-brand py-2 px-3 rounded transition-colors bg-white shadow-sm">Lesson
+                        1</a>
+                    <a href="#lesson-2"
+                        class="text-xs font-bold uppercase tracking-wider text-brand hover:text-white border border-brand hover:bg-brand py-2 px-3 rounded transition-colors bg-white shadow-sm">Lesson
+                        2</a>
+                    <a href="#lesson-3"
+                        class="text-xs font-bold uppercase tracking-wider text-brand hover:text-white border border-brand hover:bg-brand py-2 px-3 rounded transition-colors bg-white shadow-sm">Lesson
+                        3</a>
+                    <a href="#lesson-4"
+                        class="text-xs font-bold uppercase tracking-wider text-brand hover:text-white border border-brand hover:bg-brand py-2 px-3 rounded transition-colors bg-white shadow-sm">Lesson
+                        4</a>
+                    <a href="#lesson-5"
+                        class="text-xs font-bold uppercase tracking-wider text-brand hover:text-white border border-brand hover:bg-brand py-2 px-3 rounded transition-colors bg-white shadow-sm">Lesson
+                        5</a>
+                    <a href="#lesson-6"
+                        class="text-xs font-bold uppercase tracking-wider text-brand hover:text-white border border-brand hover:bg-brand py-2 px-3 rounded transition-colors bg-white shadow-sm">Lesson
+                        6</a>
+                </div>
+            </div>
+
+            <!-- LESSON 1 -->
+            <div id="lesson-1"
+                class="bg-white p-8 rounded-xl shadow-sm border border-gray-200 mb-8 print-break-inside-avoid scroll-mt-24">
+                <h2 class="text-2xl font-bold text-brand mb-6 border-b-2 border-brand-light pb-2">Lesson 1: In the
+                    Beginning</h2>
+
+                <div class="mb-8">
+                    <h3 class="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">True or False</h3>
+                    <ul class="space-y-3">
+                        <li>1. The Bible says that God was created along with the rest of creation. &mdash; <strong
+                                class="text-brand-highlight">False</strong></li>
+                        <li>2. Genesis explains the beginnings of our universe, humanity, and the great history of our
+                            common heritage. &mdash; <strong class="text-brand-highlight">True</strong></li>
+                        <li>3. The Bible says God created the world over millions of years. &mdash; <strong
+                                class="text-brand-highlight">False</strong></li>
+                        <li>4. Man was created in the image of animals. &mdash; <strong
+                                class="text-brand-highlight">False</strong></li>
+                        <li>5. You are special, unique, and crafted by the Almighty God. &mdash; <strong
+                                class="text-brand-highlight">True</strong></li>
+                        <li>6. Woman was created to help man. &mdash; <strong class="text-brand-highlight">True</strong>
+                        </li>
+                        <li>7. God originally created man to have several wives. &mdash; <strong
+                                class="text-brand-highlight">False</strong></li>
+                        <li>8. There is little to no responsibility in a new marriage. &mdash; <strong
+                                class="text-brand-highlight">False</strong></li>
+                    </ul>
+                </div>
+
+                <div class="mb-8">
+                    <h3 class="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">Search the Scriptures
+                    </h3>
+                    <ul class="space-y-3 serif-text">
+                        <li>1. In the beginning, God <strong class="text-brand">created</strong> the heavens and the
+                            earth. <span class="text-gray-400 text-sm">(Gen 1:1)</span></li>
+                        <li>2. God saw all that He had made, and behold, <strong class="text-brand">it was very
+                                good</strong>. <span class="text-gray-400 text-sm">(Gen 1:31)</span></li>
+                        <li>3. I will give thanks to You, for I am <strong class="text-brand">fearfully and
+                                wonderfully</strong> made. <span class="text-gray-400 text-sm">(Psa 139:14)</span></li>
+                        <li>4. Therefore a man shall leave his father and mother and be joined to his wife, and they
+                            shall become <strong class="text-brand">one flesh</strong>. <span
+                                class="text-gray-400 text-sm">(Gen 2:24)</span></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h3 class="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">Deeper Connections
+                        (Preferred Answers)</h3>
+                    <ul class="space-y-4">
+                        <li class="bg-gray-50 p-4 rounded border-l-4 border-brand-accent">
+                            <p class="font-bold text-gray-800 mb-2">Q: What was God’s gift of “choice,” and what were
+                                the possible outcomes of the choice?</p>
+                            <p class="text-gray-600 serif-text"><strong>A:</strong> God gave Adam free will through the
+                                tree of the knowledge of good and evil. The outcomes were: obeying God leads to harmony
+                                and life; obeying Self leads to death (physical and spiritual separation).</p>
+                        </li>
+                        <li class="bg-gray-50 p-4 rounded border-l-4 border-brand-accent">
+                            <p class="font-bold text-gray-800 mb-2">Q: Explain how a husband and wife become “one flesh”
+                                and why their relationship is unique.</p>
+                            <p class="text-gray-600 serif-text"><strong>A:</strong> A husband and wife share a unique
+                                physical, emotional, and spiritual relationship that they are to have only together.
+                                Marriage creates a new family unit joined by God.</p>
+                        </li>
+                        <li class="bg-gray-50 p-4 rounded border-l-4 border-brand-accent">
+                            <p class="font-bold text-gray-800 mb-2">Q: What are some possible consequences of not
+                                believing that humans are created in God’s image?</p>
+                            <p class="text-gray-600 serif-text"><strong>A:</strong> It strips humanity of its holy place
+                                in God's creation, making humans seem no better than brute animals, which can lead to a
+                                loss of inherent value, purpose, and self-worth.</p>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- LESSON 2 -->
+            <div id="lesson-2"
+                class="bg-white p-8 rounded-xl shadow-sm border border-gray-200 mb-8 print-break-inside-avoid scroll-mt-24">
+                <h2 class="text-2xl font-bold text-brand mb-6 border-b-2 border-brand-light pb-2">Lesson 2: The
+                    Patriarchs</h2>
+
+                <div class="mb-8">
+                    <h3 class="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">True or False</h3>
+                    <ul class="space-y-3">
+                        <li>1. Noah had faith in God by obeying God’s commands. &mdash; <strong
+                                class="text-brand-highlight">True</strong></li>
+                        <li>2. There were thousands of people who survived the flood all over the world. &mdash; <strong
+                                class="text-brand-highlight">False</strong></li>
+                        <li>3. The people of Babel wanted to build a tower to give God glory. &mdash; <strong
+                                class="text-brand-highlight">False</strong></li>
+                        <li>4. The different tribes and languages began as a result of the people’s prideful sin at the
+                            tower of Babel. &mdash; <strong class="text-brand-highlight">True</strong></li>
+                        <li>5. Abraham refused to sacrifice his son on the altar. &mdash; <strong
+                                class="text-brand-highlight">False</strong></li>
+                        <li>6. God did not ask Abraham to do anything that He was not willing to do Himself. &mdash;
+                            <strong class="text-brand-highlight">True</strong></li>
+                        <li>7. God’s promise of a blessing for the world was fulfilled in Jesus. &mdash; <strong
+                                class="text-brand-highlight">True</strong></li>
+                    </ul>
+                </div>
+
+                <div class="mb-8">
+                    <h3 class="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">Search the Scriptures
+                    </h3>
+                    <ul class="space-y-3 serif-text">
+                        <li>1. If you do well, will you not be accepted? And if you do not do well, sin lies at the
+                            door. And its desire <strong class="text-brand">is for you</strong>, but you should rule
+                            over it. <span class="text-gray-400 text-sm">(Gen 4:7)</span></li>
+                        <li>2. Then the Lord saw that the wickedness of man was great in the earth, and that every
+                            intent of the thoughts of his heart was <strong class="text-brand">only evil
+                                continually</strong>. <span class="text-gray-400 text-sm">(Gen 6:5)</span></li>
+                        <li>3. “Do not lay your hand on the lad, […]; for now I know that <strong class="text-brand">you
+                                fear God</strong> since you have not withheld your son, your only son, from Me.” <span
+                                class="text-gray-400 text-sm">(Gen 22:12)</span></li>
+                        <li>4. […] and through your offspring all nations on earth <strong class="text-brand">will be
+                                blessed</strong>, because <strong class="text-brand">you have obeyed me</strong>. <span
+                                class="text-gray-400 text-sm">(Gen 22:18)</span></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h3 class="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">Deeper Connections
+                        (Preferred Answers)</h3>
+                    <ul class="space-y-4">
+                        <li class="bg-gray-50 p-4 rounded border-l-4 border-brand-accent">
+                            <p class="font-bold text-gray-800 mb-2">Q: How did Noah demonstrate his faith in God?</p>
+                            <p class="text-gray-600 serif-text"><strong>A:</strong> By listening to and obeying God’s
+                                commands to build the ark, even when the instructions seemed strange.</p>
+                        </li>
+                        <li class="bg-gray-50 p-4 rounded border-l-4 border-brand-accent">
+                            <p class="font-bold text-gray-800 mb-2">Q: Why did God decide to flood the whole world?</p>
+                            <p class="text-gray-600 serif-text"><strong>A:</strong> Because the wickedness of man was
+                                great and every intent of their thoughts was only evil continually.</p>
+                        </li>
+                        <li class="bg-gray-50 p-4 rounded border-l-4 border-brand-accent">
+                            <p class="font-bold text-gray-800 mb-2">Q: How did God’s promise to Abraham involve Jesus?
+                            </p>
+                            <p class="text-gray-600 serif-text"><strong>A:</strong> Jesus came as a descendant of
+                                Abraham, fulfilling the promise that all nations would be blessed through his offspring.
+                            </p>
+                        </li>
+                        <li class="bg-gray-50 p-4 rounded border-l-4 border-brand-accent">
+                            <p class="font-bold text-gray-800 mb-2">Q: Why is it important that we know that men like
+                                Abraham struggled with sin?</p>
+                            <p class="text-gray-600 serif-text"><strong>A:</strong> It shows they were human and serves
+                                as a warning that all people need redemption.</p>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- LESSON 3 -->
+            <div id="lesson-3"
+                class="bg-white p-8 rounded-xl shadow-sm border border-gray-200 mb-8 print-break-inside-avoid scroll-mt-24">
+                <h2 class="text-2xl font-bold text-brand mb-6 border-b-2 border-brand-light pb-2">Lesson 3: Israel
+                    Enslaved and Redeemed</h2>
+
+                <div class="mb-8">
+                    <h3 class="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">True or False</h3>
+                    <ul class="space-y-3">
+                        <li>1. Moses never struggled with sin. &mdash; <strong
+                                class="text-brand-highlight">False</strong></li>
+                        <li>2. The Passover was a special meal and a foreshadowing example of Jesus. &mdash; <strong
+                                class="text-brand-highlight">True</strong></li>
+                        <li>3. The Law of Moses was meant to teach Israel how to love and honor God, as well as how to
+                            love and honor their fellow man. &mdash; <strong class="text-brand-highlight">True</strong>
+                        </li>
+                        <li>4. The sacrificial system in the Law was to teach Israel that in order for sins to be
+                            forgiven, an innocent sacrifice had to die. &mdash; <strong
+                                class="text-brand-highlight">True</strong></li>
+                        <li>5. Israel was meant to be a holy nation and a beacon of hope to the world that would bring
+                            mankind to God. &mdash; <strong class="text-brand-highlight">True</strong></li>
+                        <li>6. God has always desired a relationship based on choice and motivated by love. &mdash;
+                            <strong class="text-brand-highlight">True</strong></li>
+                        <li>7. Jesus did not fulfill any prophecies in the Bible. &mdash; <strong
+                                class="text-brand-highlight">False</strong></li>
+                    </ul>
+                </div>
+
+                <div class="mb-8">
+                    <h3 class="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">Search the Scriptures
+                    </h3>
+                    <ul class="space-y-3 serif-text">
+                        <li>1. Then the children of Israel groaned because of the bondage, and they <strong
+                                class="text-brand">cried out</strong>; and their cry came up to God because of the
+                            bondage. <span class="text-gray-400 text-sm">(Exo 2:23)</span></li>
+                        <li>2. You shall love the Lord your God with all your <strong class="text-brand">heart</strong>,
+                            with all your <strong class="text-brand">soul</strong>, and with all your <strong
+                                class="text-brand">strength</strong>. <span class="text-gray-400 text-sm">(Deu
+                                6:5)</span></li>
+                        <li>3. In those days there was no king in Israel: every man did that which was right <strong
+                                class="text-brand">in his own eyes</strong>. <span class="text-gray-400 text-sm">(Jud
+                                21:25)</span></li>
+                        <li>4. The Lord has sought for Himself a man <strong class="text-brand">after His own
+                                heart</strong>, and the Lord has commanded him to be commander over His people [...]
+                            <span class="text-gray-400 text-sm">(1 Sam 13:14)</span></li>
+                        <li>5. But He was wounded <strong class="text-brand">for our transgressions</strong>, He was
+                            bruised for our iniquities; the chastisement for our peace was upon Him, and by His stripes
+                            <strong class="text-brand">we are healed</strong>. <span class="text-gray-400 text-sm">(Isa
+                                53:5)</span></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h3 class="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">Deeper Connections
+                        (Preferred Answers)</h3>
+                    <ul class="space-y-4">
+                        <li class="bg-gray-50 p-4 rounded border-l-4 border-brand-accent">
+                            <p class="font-bold text-gray-800 mb-2">Q: What was the purpose of the Law of Moses?</p>
+                            <p class="text-gray-600 serif-text"><strong>A:</strong> To teach Israel how to love and
+                                honor God and their fellow man, and to reveal God's plan of redemption to the world.</p>
+                        </li>
+                        <li class="bg-gray-50 p-4 rounded border-l-4 border-brand-accent">
+                            <p class="font-bold text-gray-800 mb-2">Q: Why did God demand that a sacrifice of an
+                                innocent be made for a guilty sinner?</p>
+                            <p class="text-gray-600 serif-text"><strong>A:</strong> To teach that for sins to be
+                                forgiven, an innocent sacrifice had to die; this foreshadowed Jesus' perfect sacrifice.
+                            </p>
+                        </li>
+                        <li class="bg-gray-50 p-4 rounded border-l-4 border-brand-accent">
+                            <p class="font-bold text-gray-800 mb-2">Q: Why would God allow Israel to make bad choices
+                                (wanting a human king) instead of just telling them what to do all the time?</p>
+                            <p class="text-gray-600 serif-text"><strong>A:</strong> Because God desires a relationship
+                                based on free-will choice and motivated by love, not forced duty.</p>
+                        </li>
+                        <li class="bg-gray-50 p-4 rounded border-l-4 border-brand-accent">
+                            <p class="font-bold text-gray-800 mb-2">Q: What evidences does the Bible use to show that
+                                Jesus would be part of God’s plan to redeem man from sin?</p>
+                            <p class="text-gray-600 serif-text"><strong>A:</strong> Prophecies (e.g., the "Passover
+                                lamb" and Isaiah 53) and the sacrificial system that required innocent blood for the
+                                remission of sins.</p>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- LESSON 4 -->
+            <div id="lesson-4"
+                class="bg-white p-8 rounded-xl shadow-sm border border-gray-200 mb-8 print-break-inside-avoid scroll-mt-24">
+                <h2 class="text-2xl font-bold text-brand mb-6 border-b-2 border-brand-light pb-2">Lesson 4: The Life of
+                    Jesus</h2>
+
+                <div class="mb-8">
+                    <h3 class="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">True or False</h3>
+                    <ul class="space-y-3">
+                        <li>1. Since most people were factory workers, Jesus often taught lessons that used machines as
+                            examples. &mdash; <strong class="text-brand-highlight">False</strong></li>
+                        <li>2. Jesus performed miracles to show that He had power and authority from heaven. &mdash;
+                            <strong class="text-brand-highlight">True</strong></li>
+                        <li>3. The Jewish religious leaders usually liked Jesus. &mdash; <strong
+                                class="text-brand-highlight">False</strong></li>
+                        <li>4. Jesus Christ sinned, just like every other person on Earth. &mdash; <strong
+                                class="text-brand-highlight">False</strong></li>
+                        <li>5. The bread and the fruit of the vine (grape juice) magically turn into Jesus’ body and
+                            blood. &mdash; <strong class="text-brand-highlight">False</strong></li>
+                        <li>6. The Jewish religious council gave Jesus a fair trial. &mdash; <strong
+                                class="text-brand-highlight">False</strong></li>
+                        <li>7. Pilate was brave and refused to be bullied by the crowd. &mdash; <strong
+                                class="text-brand-highlight">False</strong></li>
+                    </ul>
+                </div>
+
+                <div class="mb-8">
+                    <h3 class="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">Search the Scriptures
+                    </h3>
+                    <ul class="space-y-3 serif-text">
+                        <li>1. “But you, O Bethlehem… from you shall come forth for me one who is to be <strong
+                                class="text-brand">ruler in Israel</strong>, whose coming forth is from of old, from
+                            ancient days.” <span class="text-gray-400 text-sm">(Mic 5:2)</span></li>
+                        <li>2. “And the Holy Spirit descended in bodily form like a dove upon Him, and a voice came from
+                            heaven which said, ‘<strong class="text-brand">You are My beloved Son</strong>’; in You I am
+                            well pleased.” <span class="text-gray-400 text-sm">(Luk 3:22)</span></li>
+                        <li>3. And as they were eating, Jesus took bread, blessed and broke it, and gave it to the
+                            disciples and said, “Take, eat; <strong class="text-brand">this is My body</strong>.” <span
+                                class="text-gray-400 text-sm">(Mat 26:26)</span></li>
+                        <li>4. O My Father, if it is possible, let this cup pass from Me; nevertheless, not as I will,
+                            <strong class="text-brand">but as You will</strong>. <span
+                                class="text-gray-400 text-sm">(Mat 26:39)</span></li>
+                        <li>5. Then Jesus came out, wearing the crown of thorns and the purple robe. And Pilate said to
+                            them, “<strong class="text-brand">Behold the Man</strong>!” <span
+                                class="text-gray-400 text-sm">(Joh 19:5)</span></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h3 class="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">Deeper Connections
+                        (Preferred Answers)</h3>
+                    <ul class="space-y-4">
+                        <li class="bg-gray-50 p-4 rounded border-l-4 border-brand-accent">
+                            <p class="font-bold text-gray-800 mb-2">Q: Why does it matter that Jesus fulfilled prophecy?
+                            </p>
+                            <p class="text-gray-600 serif-text"><strong>A:</strong> It validates that He is the
+                                long-awaited Messiah and Redeemer and that His life was part of God's divine plan.</p>
+                        </li>
+                        <li class="bg-gray-50 p-4 rounded border-l-4 border-brand-accent">
+                            <p class="font-bold text-gray-800 mb-2">Q: Why does it matter that Jesus did not sin?</p>
+                            <p class="text-gray-600 serif-text"><strong>A:</strong> A sinless life was required because
+                                God's pattern for sacrifice demanded a pure and spotless offering to redeem the sins of
+                                others.</p>
+                        </li>
+                        <li class="bg-gray-50 p-4 rounded border-l-4 border-brand-accent">
+                            <p class="font-bold text-gray-800 mb-2">Q: What do the symbols of the communion represent?
+                            </p>
+                            <p class="text-gray-600 serif-text"><strong>A:</strong> The bread represents Jesus’ body and
+                                the fruit of the vine represents His blood, shed for the remission of sins.</p>
+                        </li>
+                        <li class="bg-gray-50 p-4 rounded border-l-4 border-brand-accent">
+                            <p class="font-bold text-gray-800 mb-2">Q: Who is responsible for condemning Jesus to death?
+                            </p>
+                            <p class="text-gray-600 serif-text"><strong>A:</strong> While the Jewish leaders and the
+                                Roman governor Pilate played direct roles, the Bible also notes that it was God's plan
+                                for Jesus to be the sacrifice for the redemption of all mankind.</p>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- LESSON 5 -->
+            <div id="lesson-5"
+                class="bg-white p-8 rounded-xl shadow-sm border border-gray-200 mb-8 print-break-inside-avoid scroll-mt-24">
+                <h2 class="text-2xl font-bold text-brand mb-6 border-b-2 border-brand-light pb-2">Lesson 5: Death and
+                    Resurrection</h2>
+
+                <div class="mb-8">
+                    <h3 class="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">True or False</h3>
+                    <ul class="space-y-3">
+                        <li>1. Everyone (including Jesus) has sinned. &mdash; <strong
+                                class="text-brand-highlight">False</strong></li>
+                        <li>2. We are reconciled to God through Jesus’ death. &mdash; <strong
+                                class="text-brand-highlight">True</strong></li>
+                        <li>3. The Resurrection proves that Jesus really came from Heaven. &mdash; <strong
+                                class="text-brand-highlight">True</strong></li>
+                        <li>4. Saul (Paul) considered himself “the worst sinner” who ever lived. &mdash; <strong
+                                class="text-brand-highlight">True</strong></li>
+                        <li>5. We can earn our salvation through works of merit alone. &mdash; <strong
+                                class="text-brand-highlight">False</strong></li>
+                        <li>6. Faith is when something is planned by God and is worked out (accomplished) by man.
+                            &mdash; <strong class="text-brand-highlight">False</strong></li>
+                        <li>7. Without faith, being baptized is just getting wet! &mdash; <strong
+                                class="text-brand-highlight">True</strong></li>
+                        <li>8. Anyone in the world can become a Christian. &mdash; <strong
+                                class="text-brand-highlight">True</strong></li>
+                    </ul>
+                </div>
+
+                <div class="mb-8">
+                    <h3 class="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">Search the Scriptures
+                    </h3>
+                    <ul class="space-y-3 serif-text">
+                        <li>1. “My God, my God, why have You <strong class="text-brand">forsaken Me</strong>!” <span
+                                class="text-gray-400 text-sm">(Mat 27:46)</span></li>
+                        <li>2. “And I will put enmity between you and the woman, and between your offspring and hers; He
+                            will <strong class="text-brand">crush your head</strong>, and you will <strong
+                                class="text-brand">strike his heel</strong>.” <span class="text-gray-400 text-sm">(Gen
+                                3:15)</span></li>
+                        <li>3. If we have hoped in Christ in this life only, we are of all men <strong
+                                class="text-brand">most to be pitied</strong>. <span class="text-gray-400 text-sm">(1
+                                Cor 15:19)</span></li>
+                        <li>4. Here is a trustworthy saying that deserves full acceptance: Christ Jesus came into the
+                            world to save sinners—of whom I am <strong class="text-brand">the worst</strong>. <span
+                                class="text-gray-400 text-sm">(1 Tim 1:15)</span></li>
+                        <li>5. For by <strong class="text-brand">grace</strong> you have been saved through <strong
+                                class="text-brand">faith</strong>, and that not of yourselves... it is the gift of God,
+                            not of <strong class="text-brand">works</strong>, lest anyone should boast. <span
+                                class="text-gray-400 text-sm">(Eph 2:8-9)</span></li>
+                        <li>6. Corresponding to that, <strong class="text-brand">baptism now saves you</strong>—not the
+                            removal of dirt from the flesh, but an appeal to God for a good conscience... <span
+                                class="text-gray-400 text-sm">(1 Pet 3:21)</span></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h3 class="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">Deeper Connections
+                        (Preferred Answers)</h3>
+                    <ul class="space-y-4">
+                        <li class="bg-gray-50 p-4 rounded border-l-4 border-brand-accent">
+                            <p class="font-bold text-gray-800 mb-2">Q: In your own words, why did/does the death of
+                                Jesus matter?</p>
+                            <p class="text-gray-600 serif-text"><strong>A:</strong> Jesus’ death as the innocent and
+                                perfect sacrifice redeemed man from sin and allows us to be reconciled to God.</p>
+                        </li>
+                        <li class="bg-gray-50 p-4 rounded border-l-4 border-brand-accent">
+                            <p class="font-bold text-gray-800 mb-2">Q: In your own words, why does the resurrection of
+                                Jesus matter?</p>
+                            <p class="text-gray-600 serif-text"><strong>A:</strong> It proves His deity, validates the
+                                Bible's message, demonstrates God's power over death, and offers man the hope of eternal
+                                life.</p>
+                        </li>
+                        <li class="bg-gray-50 p-4 rounded border-l-4 border-brand-accent">
+                            <p class="font-bold text-gray-800 mb-2">Q: Why do you think someone who tried to work for a
+                                salvation of merit would be offensive to God?</p>
+                            <p class="text-gray-600 serif-text"><strong>A:</strong> It implies that salvation is
+                                something they deserve rather than accepting it as God's precious, unmerited gift.</p>
+                        </li>
+                        <li class="bg-gray-50 p-4 rounded border-l-4 border-brand-accent">
+                            <p class="font-bold text-gray-800 mb-2">Q: What is the difference between works of merit and
+                                obeying God?</p>
+                            <p class="text-gray-600 serif-text"><strong>A:</strong> Works of merit are attempts to earn
+                                a reward; obeying God is an act of faith and trust in response to His grace.</p>
+                        </li>
+                        <li class="bg-gray-50 p-4 rounded border-l-4 border-brand-accent">
+                            <p class="font-bold text-gray-800 mb-2">Q: How does a person become a Christian?</p>
+                            <p class="text-gray-600 serif-text"><strong>A:</strong> By hearing the gospel, believing in
+                                Jesus, repenting of sins, confessing Christ, and being baptized for the remission of
+                                sins.</p>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- LESSON 6 -->
+            <div id="lesson-6"
+                class="bg-white p-8 rounded-xl shadow-sm border border-gray-200 mb-8 print-break-inside-avoid scroll-mt-24">
+                <h2 class="text-2xl font-bold text-brand mb-6 border-b-2 border-brand-light pb-2">Lesson 6: Until Jesus
+                    Comes Again</h2>
+
+                <div class="mb-8">
+                    <h3 class="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">True or False</h3>
+                    <ul class="space-y-3">
+                        <li>1. Hell is only for the really bad people. &mdash; <strong
+                                class="text-brand-highlight">False</strong></li>
+                        <li>2. God does not have a “rulebook” to determine which sins are worthy of Hell. &mdash;
+                            <strong class="text-brand-highlight">False</strong></li>
+                        <li>3. All sins—if not forgiven—no matter how we may view them, are worthy of spiritual death in
+                            God’s eyes. &mdash; <strong class="text-brand-highlight">True</strong></li>
+                        <li>4. Jesus took away the fate of Hell for anyone who believes and obeys. &mdash; <strong
+                                class="text-brand-highlight">True</strong></li>
+                        <li>5. We can learn exactly what Heaven looks like. &mdash; <strong
+                                class="text-brand-highlight">False</strong></li>
+                        <li>6. In Heaven, we will live as we were meant to be: in perfection and in God’s presence.
+                            &mdash; <strong class="text-brand-highlight">True</strong></li>
+                        <li>7. I am ready for Jesus to come back. &mdash; <strong
+                                class="text-brand-highlight">True</strong></li>
+                    </ul>
+                </div>
+
+                <div class="mb-8">
+                    <h3 class="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">Search the Scriptures
+                    </h3>
+                    <ul class="space-y-3 serif-text">
+                        <li>1. “Enter by the narrow gate, for wide is the gate and broad is the way that leads to
+                            destruction, and there are many who go in by it. Because <strong
+                                class="text-brand">narrow</strong> is the gate and <strong
+                                class="text-brand">difficult</strong> is the way which leads to life, there are few who
+                            find it." <span class="text-gray-400 text-sm">(Mat 7:13-14)</span></li>
+                        <li>2. "O wretched man that I am! Who will deliver me from this <strong class="text-brand">body
+                                of death</strong>? I thank God—through Jesus Christ our Lord!" <span
+                                class="text-gray-400 text-sm">(Rom 7:24-25)</span></li>
+                        <li>3. "And God will wipe away every tear from their eyes; there shall be no more <strong
+                                class="text-brand">death</strong>, nor <strong class="text-brand">sorrow</strong>, nor
+                            <strong class="text-brand">crying</strong>. There shall be no more <strong
+                                class="text-brand">pain</strong>, for the former things have passed away." <span
+                                class="text-gray-400 text-sm">(Rev 21:4-5)</span></li>
+                        <li>4. "There shall be no night there: They need no lamp nor light of the sun, for the Lord God
+                            gives them light. And they shall reign <strong class="text-brand">forever and
+                                ever</strong>." <span class="text-gray-400 text-sm">(Rev 22:5)</span></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h3 class="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">Deeper Connections
+                        (Preferred Answers)</h3>
+                    <ul class="space-y-4">
+                        <li class="bg-gray-50 p-4 rounded border-l-4 border-brand-accent">
+                            <p class="font-bold text-gray-800 mb-2">Q: How should we live since we do not know exactly
+                                when Jesus will come back?</p>
+                            <p class="text-gray-600 serif-text"><strong>A:</strong> We should live for Him and maintain
+                                a lifestyle of faithfulness until His return.</p>
+                        </li>
+                        <li class="bg-gray-50 p-4 rounded border-l-4 border-brand-accent">
+                            <p class="font-bold text-gray-800 mb-2">Q: Why do sinners go to Hell?</p>
+                            <p class="text-gray-600 serif-text"><strong>A:</strong> Hell is a place of punishment,
+                                destruction, and eternal banishment from God for those who do not have their sins
+                                removed through the blood of Jesus.</p>
+                        </li>
+                        <li class="bg-gray-50 p-4 rounded border-l-4 border-brand-accent">
+                            <p class="font-bold text-gray-800 mb-2">Q: Does anyone deserve to go to Heaven?</p>
+                            <p class="text-gray-600 serif-text"><strong>A:</strong> No; being a good person does not
+                                remove sin. Only God's grace and an obedient faith in Jesus Christ can save us.</p>
+                        </li>
+                        <li class="bg-gray-50 p-4 rounded border-l-4 border-brand-accent">
+                            <p class="font-bold text-gray-800 mb-2">Q: What makes Heaven so special?</p>
+                            <p class="text-gray-600 serif-text"><strong>A:</strong> It is a place of perfection where
+                                all symptoms of sin (pain, death, sorrow) are removed, and the relationship between God
+                                and man is completely restored.</p>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Persistent Floating Back to Top Button -->
+        <div x-data="{ showScrollButton: false }" @scroll.window="showScrollButton = window.pageYOffset > 500"
+            class="fixed bottom-8 right-8 z-50 no-print" x-cloak>
+            <button x-show="showScrollButton" x-transition.opacity.duration.300ms
+                @click="window.scrollTo({top: 0, behavior: 'smooth'})"
+                class="bg-brand text-white p-3 rounded-full shadow-2xl hover:bg-brand-dark hover:-translate-y-1 transition-all"
+                title="Back to Top">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+                        d="M5 10l7-7m0 0l7 7m-7-7v18"></path>
+                </svg>
+            </button>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-brand-dark text-gray-400 py-8 text-center text-sm border-t-4 border-brand-highlight print:hidden">
+        <p>&copy;
+            <script>document.write(new Date().getFullYear())</script> Pure & Simple Bible. All Rights Reserved.
+        </p>
+    </footer>
+
+</body>
+
+</html>

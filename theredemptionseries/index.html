@@ -1,0 +1,1035 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Redemption Series | Pure & Simple Bible</title>
+    <link rel="icon" type="image/png" href="assets/img/rs_roundthorncrown.png">
+
+    <!-- Import Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&family=Merriweather:ital,wght@0,400;0,700;1,400&display=swap"
+        rel="stylesheet">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .serif-text {
+            font-family: 'Merriweather', 'Georgia', serif;
+        }
+
+        .font-roboto {
+            font-family: 'Roboto', sans-serif;
+        }
+
+        .bg-pattern {
+            background-color: #f8fafc;
+            background-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%230a506e' fill-opacity='0.03' fill-rule='evenodd'%3E%3Ccircle cx='3' cy='3' r='3'/%3E%3Ccircle cx='13' cy='13' r='3'/%3E%3C/g%3E%3C/svg%3E");
+        }
+
+        [x-cloak] {
+            display: none !important;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+    </style>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            DEFAULT: '#0a506e',
+                            dark: '#1e293b',
+                            light: '#78a0c8',
+                            accent: '#8cbea0',
+                            highlight: '#d2691e'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Logos RefTagger -->
+    <script>
+        var refTagger = {
+            settings: {
+                bibleVersion: "NKJV",
+                roundCorners: true,
+                socialSharing: []
+            }
+        };
+        (function (d, t) {
+            var g = d.createElement(t), s = d.getElementsByTagName(t)[0];
+            g.src = "//api.reftagger.com/v2/RefTagger.js";
+            s.parentNode.insertBefore(g, s);
+        }(document, "script"));
+    </script>
+
+    <script>
+        function courseEngine() {
+            return {
+                studentId: localStorage.getItem('psb_student_id') || null,
+                currentView: 'dashboard', /* 'dashboard', 'auth', 'lesson', 'profile' */
+                pendingLessonId: null,
+                isLoginMode: localStorage.getItem('psb_known_user') === 'true', /* Defaults to login if they've been here before */
+
+                /* Forgot Password State */
+                isForgotPasswordMode: false,
+                forgotPasswordEmail: '',
+                forgotPasswordMessage: '',
+                forgotPasswordError: '',
+                isResettingPassword: false,
+
+                authForm: { email: '', phone: '', password: '', country: 'United States', zipcode: '' },
+                authError: '',
+                isLoading: false,
+
+                lessons: [],
+                completedLessons: [],
+
+                lesson: null,
+                answers: {},
+                journal: {},
+                isCompleted: false,
+
+                adminForm: {
+                    name: localStorage.getItem('psb_student_name') || '',
+                    email: '',
+                    phone: '',
+                    message: '',
+                    country: 'United States',
+                    zipcode: ''
+                },
+                adminFormStatus: 'idle', /* idle, sending, sent, error */
+
+                saveTimeout: null,
+                fetchError: '',
+
+                /* Profile State */
+                profileForm: { email: '', phone: '', country: 'United States', zipcode: '', newPassword: '' },
+                profileMessage: '',
+                profileError: '',
+                isSavingProfile: false,
+
+                countryList: ["United States", "Afghanistan", "Albania", "Algeria", "Andorra", "Angola", "Antigua and Barbuda", "Argentina", "Armenia", "Australia", "Austria", "Azerbaijan", "Bahamas", "Bahrain", "Bangladesh", "Barbados", "Belarus", "Belgium", "Belize", "Benin", "Bhutan", "Bolivia", "Bosnia and Herzegovina", "Botswana", "Brazil", "Brunei", "Bulgaria", "Burkina Faso", "Burundi", "Côte d'Ivoire", "Cabo Verde", "Cambodia", "Cameroon", "Canada", "Central African Republic", "Chad", "Chile", "China", "Colombia", "Comoros", "Congo", "Costa Rica", "Croatia", "Cuba", "Cyprus", "Czechia", "Democratic Republic of the Congo", "Denmark", "Djibouti", "Dominica", "Dominican Republic", "Ecuador", "Egypt", "El Salvador", "Equatorial Guinea", "Eritrea", "Estonia", "Eswatini", "Ethiopia", "Fiji", "Finland", "France", "Gabon", "Gambia", "Georgia", "Germany", "Ghana", "Greece", "Grenada", "Guatemala", "Guinea", "Guinea-Bissau", "Guyana", "Haiti", "Holy See", "Honduras", "Hungary", "Iceland", "India", "Indonesia", "Iran", "Iraq", "Ireland", "Israel", "Italy", "Jamaica", "Japan", "Jordan", "Kazakhstan", "Kenya", "Kiribati", "Kuwait", "Kyrgyzstan", "Laos", "Latvia", "Lebanon", "Lesotho", "Liberia", "Libya", "Liechtenstein", "Lithuania", "Luxembourg", "Madagascar", "Malawi", "Malaysia", "Maldives", "Mali", "Malta", "Marshall Islands", "Mauritania", "Mauritius", "Mexico", "Micronesia", "Moldova", "Monaco", "Mongolia", "Montenegro", "Morocco", "Mozambique", "Myanmar", "Namibia", "Nauru", "Nepal", "Netherlands", "New Zealand", "Nicaragua", "Niger", "Nigeria", "North Korea", "North Macedonia", "Norway", "Oman", "Pakistan", "Palau", "Palestine State", "Panama", "Papua New Guinea", "Paraguay", "Peru", "Philippines", "Poland", "Portugal", "Qatar", "Romania", "Russia", "Rwanda", "Saint Kitts and Nevis", "Saint Lucia", "Saint Vincent and the Grenadines", "Samoa", "San Marino", "Sao Tome and Principe", "Saudi Arabia", "Senegal", "Serbia", "Seychelles", "Sierra Leone", "Singapore", "Slovakia", "Slovenia", "Solomon Islands", "Somalia", "South Africa", "South Korea", "South Sudan", "Spain", "Sri Lanka", "Sudan", "Suriname", "Sweden", "Switzerland", "Syria", "Tajikistan", "Tanzania", "Thailand", "Timor-Leste", "Togo", "Tonga", "Trinidad and Tobago", "Tunisia", "Turkey", "Turkmenistan", "Tuvalu", "Uganda", "Ukraine", "United Arab Emirates", "United Kingdom", "Uruguay", "Uzbekistan", "Vanuatu", "Venezuela", "Vietnam", "Yemen", "Zambia", "Zimbabwe"],
+
+                get isFormReady() {
+                    if (!this.lesson || !this.lesson.quiz) return true;
+                    let tfAnswered = true;
+                    if (this.lesson.quiz.true_false) {
+                        tfAnswered = this.lesson.quiz.true_false.every(q => this.answers[q.id] !== undefined && String(this.answers[q.id]).trim() !== '');
+                    }
+                    let fbAnswered = true;
+                    if (this.lesson.quiz.fill_blank) {
+                        fbAnswered = this.lesson.quiz.fill_blank.every(q => this.answers[q.id] !== undefined && String(this.answers[q.id]).trim() !== '');
+                    }
+                    return tfAnswered && fbAnswered;
+                },
+
+                get nextLesson() {
+                    if (!this.lesson || !this.lessons.length) return null;
+                    const currentIndex = this.lessons.findIndex(l => l.id === this.lesson.id);
+                    if (currentIndex !== -1 && currentIndex < this.lessons.length - 1) {
+                        return this.lessons[currentIndex + 1];
+                    }
+                    return null;
+                },
+
+                async init() {
+                    await this.fetchLessons();
+                    if (this.studentId) {
+                        this.loadAllProgress();
+                        this.loadStudentData(); // Silently load their profile details so the submission email has them!
+                    }
+                },
+
+                async fetchLessons() {
+                    try {
+                        let res = await fetch('data/lessons.json');
+                        let data = await res.json();
+                        this.lessons = data.lessons;
+                    } catch (e) {
+                        this.fetchError = "Could not load lessons. Please try again later.";
+                    }
+                },
+
+                async loadStudentData() {
+                    try {
+                        let res = await fetch('../api.php', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ action: 'get_student_profile', student_id: this.studentId })
+                        });
+                        let data = await res.json();
+                        if (data.success) {
+                            this.adminForm.email = data.profile.email;
+                            this.adminForm.phone = data.profile.phone;
+                            this.adminForm.country = data.profile.country || 'United States';
+                            this.adminForm.zipcode = data.profile.zipcode;
+                        }
+                    } catch (e) { }
+                },
+
+                async authenticate() {
+                    this.isLoading = true;
+                    this.authError = '';
+                    try {
+                        let res = await fetch('../api.php', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                action: 'authenticate',
+                                email: this.authForm.email,
+                                phone: this.authForm.phone,
+                                country: this.authForm.country,
+                                zipcode: this.authForm.zipcode,
+                                password: this.authForm.password
+                            })
+                        });
+                        let data = await res.json();
+
+                        if (data.success) {
+                            this.studentId = data.student_id;
+                            localStorage.setItem('psb_student_id', this.studentId);
+                            localStorage.setItem('psb_known_user', 'true');
+
+                            this.adminForm.email = this.authForm.email;
+                            if (this.authForm.phone) this.adminForm.phone = this.authForm.phone;
+                            if (this.authForm.country) this.adminForm.country = this.authForm.country;
+                            if (this.authForm.zipcode) this.adminForm.zipcode = this.authForm.zipcode;
+
+                            this.loadAllProgress();
+
+                            if (this.pendingLessonId) {
+                                let lessonToOpen = this.lessons.find(l => l.id === this.pendingLessonId);
+                                if (lessonToOpen) this.openLesson(lessonToOpen);
+                            } else {
+                                this.currentView = 'dashboard';
+                            }
+                        } else {
+                            this.authError = data.message || "Authentication failed.";
+                        }
+                    } catch (e) {
+                        this.authError = "Connection error. Please try again.";
+                    }
+                    this.isLoading = false;
+                },
+
+                logout() {
+                    this.studentId = null;
+                    this.completedLessons = [];
+                    localStorage.removeItem('psb_student_id');
+                    this.currentView = 'dashboard';
+                },
+
+                async resetPassword() {
+                    this.isResettingPassword = true;
+                    this.forgotPasswordMessage = '';
+                    this.forgotPasswordError = '';
+                    try {
+                        let res = await fetch('../api.php', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                action: 'reset_password',
+                                email: this.forgotPasswordEmail
+                            })
+                        });
+                        let data = await res.json();
+                        if (data.success) {
+                            this.forgotPasswordMessage = 'A temporary password has been sent to your email.';
+                            setTimeout(() => {
+                                this.isForgotPasswordMode = false;
+                                this.isLoginMode = true;
+                                this.forgotPasswordMessage = '';
+                                this.authForm.password = '';
+                            }, 4000);
+                        } else {
+                            this.forgotPasswordError = data.message || 'Error resetting password.';
+                        }
+                    } catch (e) {
+                        this.forgotPasswordError = 'Connection error.';
+                    }
+                    this.isResettingPassword = false;
+                },
+
+                async openProfile() {
+                    if (!this.studentId) return;
+                    this.profileMessage = '';
+                    this.profileError = '';
+                    this.lesson = null;
+                    try {
+                        let res = await fetch('../api.php', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ action: 'get_student_profile', student_id: this.studentId })
+                        });
+                        let data = await res.json();
+                        if (data.success) {
+                            this.profileForm.email = data.profile.email;
+                            this.profileForm.phone = data.profile.phone;
+                            this.profileForm.country = data.profile.country || 'United States';
+                            this.profileForm.zipcode = data.profile.zipcode;
+                            this.profileForm.newPassword = '';
+                            this.currentView = 'profile';
+                            window.scrollTo(0, 0);
+                        }
+                    } catch (e) {
+                        console.error("Failed to load profile.");
+                    }
+                },
+
+                async saveProfile() {
+                    this.isSavingProfile = true;
+                    this.profileMessage = '';
+                    this.profileError = '';
+                    try {
+                        let res = await fetch('../api.php', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                action: 'update_student_profile',
+                                student_id: this.studentId,
+                                ...this.profileForm
+                            })
+                        });
+                        let data = await res.json();
+                        if (data.success) {
+                            this.profileMessage = 'Profile updated successfully!';
+                            this.profileForm.newPassword = '';
+
+                            // Immediately update their lesson submission form with the new data!
+                            this.adminForm.email = this.profileForm.email;
+                            this.adminForm.phone = this.profileForm.phone;
+                            this.adminForm.country = this.profileForm.country;
+                            this.adminForm.zipcode = this.profileForm.zipcode;
+
+                            setTimeout(() => { this.profileMessage = ''; }, 3000);
+                        } else {
+                            this.profileError = data.message || 'Failed to update profile.';
+                        }
+                    } catch (e) {
+                        this.profileError = 'Connection error.';
+                    }
+                    this.isSavingProfile = false;
+                },
+
+                async loadAllProgress() {
+                    try {
+                        let res = await fetch('../api.php', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                action: 'load_all_progress',
+                                student_id: this.studentId,
+                                course_id: 'redemption'
+                            })
+                        });
+                        let data = await res.json();
+                        if (data.success) {
+                            this.completedLessons = data.completed_lessons.map(id => parseInt(id));
+                        }
+                    } catch (e) { console.error("Failed to load progress list."); }
+                },
+
+                async openLesson(selectedLesson) {
+                    if (!this.studentId) {
+                        this.pendingLessonId = selectedLesson.id;
+                        this.currentView = 'auth';
+                        window.scrollTo(0, 0);
+                        return;
+                    }
+
+                    this.lesson = selectedLesson;
+                    this.answers = {};
+                    this.journal = {};
+                    this.isCompleted = false;
+                    this.adminFormStatus = 'idle';
+                    this.pendingLessonId = null;
+
+                    try {
+                        let res = await fetch('../api.php', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                action: 'load_progress',
+                                student_id: this.studentId,
+                                course_id: 'redemption',
+                                lesson_id: this.lesson.id
+                            })
+                        });
+                        let data = await res.json();
+                        if (data.success) {
+                            this.isCompleted = data.is_completed;
+                            if (data.journal) this.journal = data.journal;
+                            if (data.quiz) this.answers = data.quiz;
+                        }
+                    } catch (e) { console.error("Failed to load lesson progress."); }
+
+                    this.currentView = 'lesson';
+                    window.scrollTo(0, 0);
+
+                    // Re-trigger Logos RefTagger after the lesson is rendered
+                    setTimeout(() => {
+                        if (window.refTagger && typeof window.refTagger.tag === 'function') {
+                            window.refTagger.tag();
+                        }
+                    }, 500);
+                },
+
+                goBack() {
+                    this.saveToCloud();
+                    this.lesson = null;
+                    this.currentView = 'dashboard';
+                    this.loadAllProgress();
+                    window.scrollTo(0, 0);
+                },
+
+                triggerSave() {
+                    clearTimeout(this.saveTimeout);
+                    this.saveTimeout = setTimeout(() => {
+                        this.saveToCloud();
+                    }, 1500);
+                },
+
+                async saveToCloud() {
+                    if (!this.studentId || !this.lesson) return;
+                    try {
+                        await fetch('../api.php', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                action: 'save_progress',
+                                student_id: this.studentId,
+                                course_id: 'redemption',
+                                lesson_id: this.lesson.id,
+                                is_completed: this.isCompleted,
+                                journal: this.journal,
+                                quiz: this.answers
+                            })
+                        });
+                    } catch (e) { console.error("Silent save failed."); }
+                },
+
+                async submitToAdmin() {
+                    if (!this.isFormReady) return;
+
+                    // Securely remember their name so they never have to type it again!
+                    localStorage.setItem('psb_student_name', this.adminForm.name);
+                    this.adminFormStatus = 'sending';
+
+                    try {
+                        let res = await fetch('../api.php', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                action: 'submit_to_admin',
+                                student_id: this.studentId,
+                                course_id: 'redemption',
+                                course_title: 'The Redemption Series',
+                                lesson_id: this.lesson.id,
+                                name: this.adminForm.name,
+                                email: this.adminForm.email,
+                                message: this.adminForm.message,
+                                journal: this.journal,
+                                deeper_connections: this.lesson.deeper_connections,
+                                quiz: this.lesson.quiz,
+                                answers: this.answers
+                            })
+                        });
+                        let data = await res.json();
+                        if (data.success) {
+                            this.adminFormStatus = 'sent';
+                        } else {
+                            this.adminFormStatus = 'error';
+                            setTimeout(() => { this.adminFormStatus = 'idle'; }, 3000);
+                        }
+                    } catch (e) {
+                        this.adminFormStatus = 'error';
+                        setTimeout(() => { this.adminFormStatus = 'idle'; }, 3000);
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Alpine.js -->
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+</head>
+
+<body class="bg-pattern min-h-screen flex flex-col font-roboto text-gray-800" x-data="courseEngine()">
+
+    <!-- Navigation -->
+    <nav class="bg-brand-dark text-white shadow-md sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <img src="assets/img/rs_roundthorncrown.png" alt="Logo" class="h-8 w-8">
+                <span class="font-bold text-xl tracking-wider hidden sm:inline">THE REDEMPTION SERIES</span>
+            </div>
+
+            <div class="flex items-center gap-4">
+                <button x-show="currentView === 'lesson'" @click="goBack()" x-cloak
+                    class="text-sm font-bold bg-white/10 hover:bg-white/20 px-3 py-1.5 rounded transition-colors">
+                    &larr; Dashboard
+                </button>
+                <div x-show="studentId" x-cloak class="flex items-center gap-4 border-l border-white/20 pl-4 ml-2">
+                    <button @click="openProfile()"
+                        class="text-sm font-medium text-brand-light hover:text-white transition-colors hidden md:inline">My
+                        Profile</button>
+                    <button @click="logout()" class="text-sm font-bold hover:text-brand-light transition-colors">Sign
+                        Out</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="flex-grow">
+
+        <!-- DASHBOARD VIEW (Publicly Accessible) -->
+        <template x-if="currentView === 'dashboard'">
+            <div class="max-w-6xl mx-auto py-12 px-4">
+
+                <!-- BACK LINK TO MASTER HOMEPAGE -->
+                <a href="https://www.psbstudies.com"
+                    class="mb-8 text-sm font-bold text-gray-500 hover:text-brand flex items-center gap-2 transition-colors inline-flex">
+                    <span>&larr; Back to All Studies</span>
+                </a>
+
+                <div class="text-center mb-10">
+                    <h1 class="text-4xl md:text-5xl font-bold text-brand-dark font-roboto mb-4 leading-tight">
+                        Welcome to the Redemption Series<br>
+                        <span
+                            class="text-brand-highlight uppercase text-2xl md:text-3xl block mt-2 tracking-wider">INTERACTIVE
+                            BIBLE STUDY</span>
+                    </h1>
+                    <p class="text-gray-600 max-w-2xl mx-auto text-lg serif-text">
+                        Explore God's plan for humanity through this six-part interactive study.
+                        Click a lesson below to begin.
+                    </p>
+                    <p x-show="fetchError" class="text-red-500 font-bold mt-4" x-text="fetchError"></p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <template x-for="l in lessons" :key="l.id">
+                        <!-- Lesson Card -->
+                        <div @click="openLesson(l)"
+                            class="bg-white rounded-xl shadow-md border border-gray-200 overflow-hidden cursor-pointer hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group flex flex-col h-full relative">
+
+                            <!-- Completed Badge -->
+                            <div x-show="completedLessons.includes(l.id)"
+                                class="absolute top-4 right-4 bg-brand-accent text-white text-xs font-bold px-2 py-1 rounded shadow-sm z-10">
+                                COMPLETED
+                            </div>
+
+                            <div class="h-48 bg-gray-100 relative overflow-hidden">
+                                <img :src="'assets/img/' + (l.thumbnail || 'lesson01_card01.jpg')" alt="Thumbnail"
+                                    loading="lazy"
+                                    class="w-full h-full object-cover transition-opacity duration-500 group-hover:opacity-0 absolute inset-0">
+                                <img :src="'assets/img/' + (l.thumbnail_hover || 'lesson01_card02.jpg')"
+                                    alt="Thumbnail Hover" loading="lazy"
+                                    class="w-full h-full object-cover transition-opacity duration-500 opacity-0 group-hover:opacity-100 absolute inset-0">
+                                <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+                                <div class="absolute bottom-4 left-4 text-white">
+                                    <h3 class="text-xl font-bold font-serif leading-tight" x-text="l.title"></h3>
+                                </div>
+                            </div>
+                            <div class="p-6 flex-grow flex flex-col justify-between">
+                                <p class="text-gray-600 serif-text italic" x-text="l.subtitle"></p>
+
+                                <!-- NEW BOTTOM ROW -->
+                                <div class="mt-6 pt-4 border-t border-gray-100 flex justify-between items-center">
+                                    <!-- Left Justified Lesson Indicator -->
+                                    <span class="text-brand-highlight font-bold text-xs tracking-widest uppercase">
+                                        Lesson <span x-text="l.id"></span>
+                                    </span>
+
+                                    <!-- Right Justified Action -->
+                                    <div
+                                        class="flex items-center gap-1 text-sm font-bold text-brand group-hover:text-brand-highlight transition-colors">
+                                        <span
+                                            x-text="completedLessons.includes(l.id) ? 'Review Lesson' : 'Start Lesson'"></span>
+                                        <span>&rarr;</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+            </div>
+        </template>
+
+        <!-- AUTHENTICATION VIEW -->
+        <template x-if="currentView === 'auth'">
+            <div class="max-w-md mx-auto py-20 px-4">
+                <button @click="currentView = 'dashboard'; pendingLessonId = null"
+                    class="mb-6 text-sm font-bold text-gray-500 hover:text-brand flex items-center gap-2">
+                    &larr; Back to Lessons
+                </button>
+
+                <div class="bg-white p-8 rounded-xl shadow-lg border border-gray-100">
+
+                    <!-- Standard Login / Signup Form -->
+                    <template x-if="!isForgotPasswordMode">
+                        <div>
+                            <h2 class="text-2xl font-bold text-brand-dark mb-2 text-center"
+                                x-text="isLoginMode ? 'Welcome Back' : 'Save Your Progress'"></h2>
+                            <p class="text-gray-500 text-sm text-center mb-6"
+                                x-text="isLoginMode ? 'Enter your email and password to log in.' : 'Create a free account to save your progress.'">
+                            </p>
+
+                            <!-- Login / Signup Toggle -->
+                            <div class="flex justify-center mb-8 bg-gray-100 p-1 rounded-lg">
+                                <button @click="isLoginMode = false; authError = ''" type="button"
+                                    :class="!isLoginMode ? 'bg-white shadow text-brand-dark' : 'text-gray-500 hover:text-gray-700'"
+                                    class="w-1/2 py-2 text-sm font-bold rounded-md transition-all">Sign Up</button>
+                                <button @click="isLoginMode = true; authError = ''" type="button"
+                                    :class="isLoginMode ? 'bg-white shadow text-brand-dark' : 'text-gray-500 hover:text-gray-700'"
+                                    class="w-1/2 py-2 text-sm font-bold rounded-md transition-all">Log In</button>
+                            </div>
+
+                            <form @submit.prevent="authenticate" class="space-y-4">
+                                <div>
+                                    <label class="block text-sm font-bold text-gray-700 mb-1">Email Address</label>
+                                    <input type="email" x-model="authForm.email" required
+                                        class="w-full p-3 border border-gray-300 rounded focus:border-brand outline-none focus:ring-1 ring-brand">
+                                </div>
+                                <div x-show="!isLoginMode">
+                                    <label class="block text-sm font-bold text-gray-700 mb-1">Phone Number
+                                        (Optional)</label>
+                                    <input type="tel" x-model="authForm.phone"
+                                        class="w-full p-3 border border-gray-300 rounded focus:border-brand outline-none focus:ring-1 ring-brand">
+                                </div>
+                                <div x-show="!isLoginMode">
+                                    <label class="block text-sm font-bold text-gray-700 mb-1">Country</label>
+                                    <select x-model="authForm.country" :required="!isLoginMode"
+                                        class="w-full p-3 border border-gray-300 rounded focus:border-brand outline-none focus:ring-1 ring-brand bg-white">
+                                        <template x-for="c in countryList" :key="c">
+                                            <option :value="c" x-text="c"></option>
+                                        </template>
+                                    </select>
+                                </div>
+                                <div x-show="!isLoginMode">
+                                    <label class="block text-sm font-bold text-gray-700 mb-1">Zip / Postal Code</label>
+                                    <input type="text" x-model="authForm.zipcode" :required="!isLoginMode"
+                                        class="w-full p-3 border border-gray-300 rounded focus:border-brand outline-none focus:ring-1 ring-brand">
+                                </div>
+                                <div>
+                                    <div class="flex justify-between items-end mb-1">
+                                        <label class="block text-sm font-bold text-gray-700">Password</label>
+                                        <button type="button" x-show="isLoginMode"
+                                            @click="isForgotPasswordMode = true; forgotPasswordEmail = authForm.email"
+                                            class="text-xs text-brand hover:underline font-bold">Forgot
+                                            Password?</button>
+                                    </div>
+                                    <input type="password" x-model="authForm.password" required
+                                        class="w-full p-3 border border-gray-300 rounded focus:border-brand outline-none focus:ring-1 ring-brand">
+                                </div>
+                                <p x-show="authError" class="text-red-500 text-sm font-bold text-center"
+                                    x-text="authError"></p>
+                                <button type="submit"
+                                    class="w-full bg-brand hover:bg-brand-dark text-white font-bold py-3 rounded transition-colors mt-4 shadow"
+                                    :disabled="isLoading">
+                                    <span x-show="!isLoading"
+                                        x-text="isLoginMode ? 'Log In &rarr;' : 'Create Account &rarr;'"></span>
+                                    <span x-show="isLoading">Authenticating...</span>
+                                </button>
+                            </form>
+                        </div>
+                    </template>
+
+                    <!-- Forgot Password Form -->
+                    <template x-if="isForgotPasswordMode">
+                        <div>
+                            <h2 class="text-2xl font-bold text-brand-dark mb-2 text-center">Reset Password</h2>
+                            <p class="text-gray-500 text-sm text-center mb-6">Enter your email address and we'll send
+                                you a temporary password.</p>
+
+                            <form @submit.prevent="resetPassword" class="space-y-4">
+                                <div>
+                                    <label class="block text-sm font-bold text-gray-700 mb-1">Email Address</label>
+                                    <input type="email" x-model="forgotPasswordEmail" required
+                                        class="w-full p-3 border border-gray-300 rounded focus:border-brand outline-none focus:ring-1 ring-brand">
+                                </div>
+                                <p x-show="forgotPasswordError" class="text-red-500 text-sm font-bold text-center"
+                                    x-text="forgotPasswordError"></p>
+                                <p x-show="forgotPasswordMessage" class="text-green-600 text-sm font-bold text-center"
+                                    x-text="forgotPasswordMessage"></p>
+
+                                <button type="submit"
+                                    class="w-full bg-brand hover:bg-brand-dark text-white font-bold py-3 rounded transition-colors mt-4 shadow"
+                                    :disabled="isResettingPassword">
+                                    <span x-show="!isResettingPassword">Send Temporary Password</span>
+                                    <span x-show="isResettingPassword">Sending...</span>
+                                </button>
+
+                                <div class="text-center mt-4">
+                                    <button type="button" @click="isForgotPasswordMode = false"
+                                        class="text-sm text-gray-500 hover:text-brand font-bold">&larr; Back to
+                                        Login</button>
+                                </div>
+                            </form>
+                        </div>
+                    </template>
+
+                </div>
+            </div>
+        </template>
+
+        <!-- PROFILE VIEW -->
+        <template x-if="currentView === 'profile'">
+            <div class="max-w-xl mx-auto py-12 px-4">
+                <button @click="currentView = 'dashboard'"
+                    class="mb-6 text-sm font-bold text-gray-500 hover:text-brand flex items-center gap-2">
+                    &larr; Back to Dashboard
+                </button>
+
+                <div class="bg-white p-8 rounded-xl shadow-lg border border-gray-100">
+                    <h2 class="text-2xl font-bold text-brand-dark mb-2 border-b pb-4">My Profile</h2>
+                    <p class="text-gray-500 text-sm mb-6">Update your contact information or location. This ensures your
+                        lessons are sent to the correct local instructor.</p>
+
+                    <form @submit.prevent="saveProfile" class="space-y-4">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-bold text-gray-700 mb-1">Email Address</label>
+                                <input type="email" x-model="profileForm.email" required
+                                    class="w-full p-3 border border-gray-300 rounded focus:border-brand outline-none focus:ring-1 ring-brand">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-bold text-gray-700 mb-1">Phone Number</label>
+                                <input type="tel" x-model="profileForm.phone"
+                                    class="w-full p-3 border border-gray-300 rounded focus:border-brand outline-none focus:ring-1 ring-brand">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-bold text-gray-700 mb-1">Country</label>
+                                <select x-model="profileForm.country" required
+                                    class="w-full p-3 border border-gray-300 rounded focus:border-brand outline-none focus:ring-1 ring-brand bg-white">
+                                    <template x-for="c in countryList" :key="c">
+                                        <option :value="c" x-text="c"></option>
+                                    </template>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-bold text-gray-700 mb-1">Zip / Postal Code</label>
+                                <input type="text" x-model="profileForm.zipcode" required
+                                    class="w-full p-3 border border-gray-300 rounded focus:border-brand outline-none focus:ring-1 ring-brand">
+                            </div>
+                        </div>
+
+                        <div class="pt-4 border-t border-gray-100">
+                            <label class="block text-sm font-bold text-gray-700 mb-1">Change Password (Optional)</label>
+                            <p class="text-xs text-gray-500 mb-2">Leave blank to keep your current password.</p>
+                            <input type="password" x-model="profileForm.newPassword" placeholder="New Password"
+                                autocomplete="new-password"
+                                class="w-full p-3 border border-gray-300 rounded focus:border-brand outline-none focus:ring-1 ring-brand">
+                        </div>
+
+                        <div class="pt-2">
+                            <p x-show="profileError" class="text-red-500 text-sm font-bold text-center mb-2"
+                                x-text="profileError"></p>
+                            <p x-show="profileMessage" class="text-green-600 text-sm font-bold text-center mb-2"
+                                x-text="profileMessage"></p>
+
+                            <button type="submit"
+                                class="w-full bg-brand hover:bg-brand-dark text-white font-bold py-3 rounded transition-colors shadow"
+                                :disabled="isSavingProfile">
+                                <span x-show="!isSavingProfile">Save Changes</span>
+                                <span x-show="isSavingProfile">Saving...</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </template>
+
+        <!-- LESSON VIEW -->
+        <template x-if="currentView === 'lesson' && lesson">
+            <div class="max-w-4xl mx-auto py-8 px-4 md:px-8 relative">
+
+                <!-- Lesson Header -->
+                <header class="mb-10 border-b border-gray-200 pb-8 text-center">
+                    <img :src="'assets/img/' + (lesson.header_image || 'lesson01_01.jpg')" alt="Header Art"
+                        class="w-full h-auto rounded-xl shadow-md mb-8">
+                    <div class="inline-block mb-3">
+                        <span
+                            class="text-sm font-bold text-brand-highlight uppercase tracking-widest bg-brand-highlight/10 px-3 py-1 rounded-full">Lesson
+                            <span x-text="lesson.id"></span></span>
+                    </div>
+                    <h1 class="text-4xl md:text-5xl font-black text-brand-dark font-roboto mb-3 tracking-tight"
+                        x-text="lesson.title"></h1>
+                    <h2 class="text-xl md:text-2xl text-gray-500 italic serif-text" x-text="lesson.subtitle"></h2>
+                </header>
+
+                <!-- Welcome Back / Jump to Quiz -->
+                <div x-show="(Object.keys(answers).length > 0 || Object.keys(journal).length > 0) && !isCompleted"
+                    class="text-center mb-8">
+                    <button @click="document.getElementById('quiz-section').scrollIntoView({behavior: 'smooth'})"
+                        class="bg-brand-highlight/10 text-brand-highlight hover:bg-brand-highlight/20 font-bold py-2 px-6 rounded-full transition-colors text-sm inline-flex items-center gap-2 border border-brand-highlight/20">
+                        Welcome back! Go directly to the Quiz &darr;
+                    </button>
+                </div>
+
+                <!-- Reading Content -->
+                <div class="space-y-12 mb-16">
+                    <template x-for="part in lesson.parts" :key="part.title">
+                        <div class="bg-white p-6 md:p-10 rounded-xl shadow-sm border border-gray-200">
+                            <h3 class="text-2xl font-black text-brand-dark mb-8 pb-3 border-b-2 border-brand-light inline-block uppercase tracking-wide"
+                                x-text="part.title"></h3>
+
+                            <template x-for="(section, index) in part.sections" :key="index">
+                                <div class="mb-10 last:mb-0 overflow-hidden">
+                                    <h4 x-show="section.heading" class="font-bold text-gray-800 text-xl mb-4"
+                                        x-text="section.heading"></h4>
+
+                                    <template x-if="section.image">
+                                        <div
+                                            :class="section.image_size === 'full' ? 'mb-6 w-full' : (index % 2 !== 0 ? 'mb-4 md:mb-2 md:float-right md:ml-8 w-full md:w-[320px]' : 'mb-4 md:mb-2 md:float-left md:mr-8 w-full md:w-[320px]')">
+                                            <img :src="'assets/img/' + section.image" :alt="section.heading"
+                                                loading="lazy" class="rounded shadow-md w-full object-cover">
+                                        </div>
+                                    </template>
+
+                                    <p class="serif-text text-gray-700 leading-relaxed text-lg whitespace-pre-line"
+                                        x-html="section.content"></p>
+                                    <div class="clear-both"></div>
+                                </div>
+                            </template>
+                        </div>
+                    </template>
+
+                    <div x-show="!lesson.parts || lesson.parts.length === 0"
+                        class="text-center py-20 bg-white rounded-xl shadow-sm border border-gray-200">
+                        <h3 class="text-2xl font-bold text-gray-400">Lesson Content Coming Soon</h3>
+                    </div>
+                </div>
+
+                <!-- Interactive Section -->
+                <div id="quiz-section" x-show="lesson.parts && lesson.parts.length > 0"
+                    class="bg-white rounded-xl shadow-lg border-t-4 border-t-brand overflow-hidden">
+                    <div class="bg-gray-50 p-6 md:p-8 border-b border-gray-200">
+                        <h3 class="text-2xl font-black text-brand-dark uppercase tracking-tight">Interactive Study</h3>
+                        <p class="text-gray-500 text-sm mt-1">Complete the quiz and journal to finish the lesson.</p>
+                    </div>
+
+                    <div class="p-6 md:p-8 space-y-12">
+
+                        <!-- True / False -->
+                        <div x-show="lesson.quiz && lesson.quiz.true_false && lesson.quiz.true_false.length > 0">
+                            <h4 class="text-lg font-bold text-brand mb-4 flex items-center gap-2">
+                                <span
+                                    class="bg-brand text-white w-6 h-6 rounded-full flex items-center justify-center text-xs">1</span>
+                                True or False
+                            </h4>
+                            <div class="space-y-4 pl-8">
+                                <template x-for="q in lesson.quiz.true_false" :key="q.id">
+                                    <div class="bg-gray-50 p-4 rounded border border-gray-100">
+                                        <p class="font-medium text-gray-800 mb-3" x-text="q.question"></p>
+                                        <div class="flex gap-4">
+                                            <label class="flex items-center gap-2 cursor-pointer">
+                                                <input type="radio" :name="q.id" value="true" x-model="answers[q.id]"
+                                                    @change="triggerSave" class="w-4 h-4 text-brand focus:ring-brand">
+                                                <span>True</span>
+                                            </label>
+                                            <label class="flex items-center gap-2 cursor-pointer">
+                                                <input type="radio" :name="q.id" value="false" x-model="answers[q.id]"
+                                                    @change="triggerSave" class="w-4 h-4 text-brand focus:ring-brand">
+                                                <span>False</span>
+                                            </label>
+                                        </div>
+                                        <div x-show="answers[q.id] !== undefined" class="mt-2 text-sm font-bold"
+                                            :class="String(answers[q.id]) === String(q.answer) ? 'text-green-600' : 'text-red-500'">
+                                            <span
+                                                x-text="String(answers[q.id]) === String(q.answer) ? '✓ Correct' : '✗ Try again'"></span>
+                                        </div>
+                                    </div>
+                                </template>
+                            </div>
+                        </div>
+
+                        <!-- Fill in the Blank -->
+                        <div x-show="lesson.quiz && lesson.quiz.fill_blank && lesson.quiz.fill_blank.length > 0">
+                            <h4 class="text-lg font-bold text-brand mb-4 flex items-center gap-2">
+                                <span
+                                    class="bg-brand text-white w-6 h-6 rounded-full flex items-center justify-center text-xs">2</span>
+                                Search the Scriptures
+                            </h4>
+                            <div class="space-y-4 pl-8">
+                                <template x-for="q in lesson.quiz.fill_blank" :key="q.id">
+                                    <div class="bg-gray-50 p-4 rounded border border-gray-100"
+                                        x-data="{ focused: false }">
+                                        <span
+                                            class="text-xs font-bold text-brand-highlight uppercase tracking-wider mb-2 block"
+                                            x-text="q.verse"></span>
+                                        <p class="serif-text text-gray-800 text-lg leading-loose">
+                                            <span x-text="q.before"></span>
+                                            <input type="text" x-model="answers[q.id]" @input="triggerSave"
+                                                @focus="focused = true" @blur="focused = false"
+                                                class="border-b-2 border-brand border-t-0 border-l-0 border-r-0 bg-transparent focus:ring-0 focus:border-brand-highlight px-2 py-1 text-center font-bold text-brand outline-none w-40"
+                                                placeholder="...">
+                                            <span x-text="q.after"></span>
+                                        </p>
+                                        <div x-show="answers[q.id] && answers[q.id].length > 0 && (((answers[q.id] || '').toLowerCase().trim() === q.answer.toLowerCase().trim()) || !focused)"
+                                            class="mt-2 text-sm font-bold"
+                                            :class="(answers[q.id] || '').toLowerCase().trim() === q.answer.toLowerCase().trim() ? 'text-green-600' : 'text-red-500'">
+                                            <span
+                                                x-text="(answers[q.id] || '').toLowerCase().trim() === q.answer.toLowerCase().trim() ? '✓ Correct' : '✗ Try again'"></span>
+                                        </div>
+                                    </div>
+                                </template>
+                            </div>
+                        </div>
+
+                        <!-- Deeper Connections (Journal) -->
+                        <div x-show="lesson.deeper_connections && lesson.deeper_connections.length > 0">
+                            <h4 class="text-lg font-bold text-brand mb-4 flex items-center gap-2">
+                                <span
+                                    class="bg-brand text-white w-6 h-6 rounded-full flex items-center justify-center text-xs">3</span>
+                                Deeper Connections
+                            </h4>
+                            <p class="text-sm text-gray-500 mb-6 pl-8">These questions are for your personal reflection.
+                                Your answers will be shared with your instructor.</p>
+                            <div class="space-y-6 pl-8">
+                                <template x-for="(prompt, index) in lesson.deeper_connections" :key="index">
+                                    <div>
+                                        <label class="block font-medium text-gray-800 mb-2" x-text="prompt"></label>
+                                        <textarea x-model="journal[index]" @input="triggerSave" rows="3"
+                                            class="w-full p-3 border border-gray-300 rounded focus:border-brand outline-none focus:ring-1 ring-brand serif-text"
+                                            placeholder="Type your thoughts here..."></textarea>
+                                    </div>
+                                </template>
+                            </div>
+                        </div>
+
+                        <!-- Submit Section -->
+                        <div class="mt-12 pt-8 border-t border-gray-200">
+                            <div x-show="!isFormReady" class="bg-orange-50 border-l-4 border-orange-400 p-4 mb-6">
+                                <p class="text-orange-800 font-bold text-sm">Please answer all quiz questions before
+                                    submitting.</p>
+                            </div>
+
+                            <div x-show="isFormReady" class="bg-green-50 border-l-4 border-green-500 p-6 rounded">
+                                <h4 class="text-lg font-bold text-green-800 mb-2">Great job! You've completed the study.
+                                </h4>
+                                <p class="text-green-700 text-sm mb-6">Submit your answers below to share your progress
+                                    with an instructor.</p>
+
+                                <template x-if="isCompleted && adminFormStatus === 'idle'">
+                                    <div class="bg-white p-4 rounded border border-green-200 text-center">
+                                        <p class="font-bold text-green-700">You have already submitted this lesson.</p>
+                                        <button @click="isCompleted = false"
+                                            class="text-sm text-brand hover:underline mt-2">Submit again?</button>
+                                    </div>
+                                </template>
+
+                                <template x-if="!isCompleted || adminFormStatus !== 'idle'">
+                                    <form x-show="adminFormStatus !== 'sent'" @submit.prevent="submitToAdmin"
+                                        class="space-y-4 max-w-2xl mx-auto">
+
+                                        <!-- Simplified Submission Form! -->
+                                        <div>
+                                            <label class="block text-sm font-bold text-brand-dark mb-1">Your
+                                                Name</label>
+                                            <input type="text" x-model="adminForm.name" required
+                                                :disabled="!isFormReady" placeholder="First and Last Name"
+                                                class="w-full p-3 border border-gray-300 rounded focus:border-brand outline-none focus:ring-1 ring-brand disabled:bg-gray-100 disabled:text-gray-400">
+                                        </div>
+
+                                        <div>
+                                            <label class="block text-sm font-bold text-brand-dark mb-1">Message for
+                                                Instructor (Optional)</label>
+                                            <textarea x-model="adminForm.message" rows="2" :disabled="!isFormReady"
+                                                placeholder="Any thoughts or questions about this lesson?"
+                                                class="w-full p-3 border border-gray-300 rounded focus:border-brand outline-none focus:ring-1 ring-brand disabled:bg-gray-100 disabled:text-gray-400"></textarea>
+                                        </div>
+
+                                        <div class="pt-2">
+                                            <button type="submit"
+                                                :disabled="!isFormReady || adminFormStatus === 'sending'"
+                                                class="w-full bg-brand hover:bg-brand-dark text-white font-bold py-4 rounded shadow-lg transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed uppercase tracking-wider">
+                                                <span
+                                                    x-show="adminFormStatus === 'idle' || adminFormStatus === 'error'">Submit
+                                                    Lesson</span>
+                                                <span x-show="adminFormStatus === 'sending'">Sending...</span>
+                                            </button>
+                                        </div>
+                                        <p x-show="adminFormStatus === 'error'"
+                                            class="text-red-500 text-sm font-bold text-center mt-2">Error connecting to
+                                            server. Please try again.</p>
+                                    </form>
+                                </template>
+
+                                <div x-show="adminFormStatus === 'sent'" class="text-center py-8">
+                                    <div
+                                        class="w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl">
+                                        ✓</div>
+                                    <h4 class="text-xl font-bold text-brand-dark mb-2">Lesson Submitted Successfully!
+                                    </h4>
+                                    <p class="text-gray-600 mb-8">An instructor has been notified and will review your
+                                        answers soon.</p>
+
+                                    <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+                                        <button @click="goBack()"
+                                            class="bg-gray-200 hover:bg-gray-300 text-brand-dark font-bold py-3 px-6 rounded transition-colors w-full sm:w-auto">Return
+                                            to Dashboard</button>
+
+                                        <template x-if="nextLesson">
+                                            <button @click="openLesson(nextLesson)"
+                                                class="bg-brand hover:bg-brand-dark text-white font-bold py-3 px-6 rounded shadow-md transition-colors w-full sm:w-auto flex items-center justify-center gap-2">
+                                                Continue to Lesson <span x-text="nextLesson.id"></span> &rarr;
+                                            </button>
+                                        </template>
+
+                                        <!-- The Finish Series Button -->
+                                        <template x-if="!nextLesson">
+                                            <a href="../completed.html?study=The+Redemption+Series"
+                                                class="bg-brand-highlight hover:bg-orange-700 text-white font-bold py-3 px-8 rounded shadow-lg transition-colors w-full sm:w-auto flex items-center justify-center gap-2 uppercase tracking-wider">
+                                                Finish Series &rarr;
+                                            </a>
+                                        </template>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+        </template>
+
+        <!-- Persistent Floating Back to Top Button -->
+        <div x-data="{ showScrollButton: false }" @scroll.window="showScrollButton = window.pageYOffset > 500"
+            class="fixed bottom-8 right-8 z-50" x-cloak>
+            <button x-show="showScrollButton" x-transition.opacity.duration.300ms
+                @click="window.scrollTo({top: 0, behavior: 'smooth'})"
+                class="bg-brand text-white p-3 rounded-full shadow-2xl hover:bg-brand-dark hover:-translate-y-1 transition-all"
+                title="Back to Top">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+                        d="M5 10l7-7m0 0l7 7m-7-7v18"></path>
+                </svg>
+            </button>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-brand-dark text-gray-400 py-8 text-center text-sm border-t-4 border-brand-highlight">
+        <p>&copy;
+            <script>document.write(new Date().getFullYear())</script> Pure & Simple Bible. All Rights Reserved.
+        </p>
+    </footer>
+
+</body>
+
+</html>
