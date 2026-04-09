@@ -41,6 +41,10 @@ function haversineGreatCircleDistance($latitudeFrom, $longitudeFrom, $latitudeTo
     $latTo = deg2rad($latitudeTo);
     $lonTo = deg2rad($longitudeTo);
 
+    // FIX: Delta variables defined to prevent PHP math crash
+    $latDelta = $latTo - $latFrom;
+    $lonDelta = $lonTo - $lonFrom;
+
     $angle = 2 * asin(sqrt(pow(sin($latDelta / 2), 2) +
         cos($latFrom) * cos($latTo) * pow(sin($lonDelta / 2), 2)));
     return $angle * $earthRadius;
@@ -93,7 +97,8 @@ function send_app_email($to, $subject, $html_message, $reply_to = null) {
 }
 
 try {
-    $conn = new PDO("mysql:host={$host};dbname={$db_name}", $username, $password);
+    // Uses utf8mb4 to guarantee special characters save correctly
+    $conn = new PDO("mysql:host={$host};dbname={$db_name};charset=utf8mb4", $username, $password);
     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 } catch (PDOException $e) {
     echo json_encode(["success" => false, "message" => "Database connection failed: " . $e->getMessage()]);
