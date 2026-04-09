@@ -4,7 +4,579 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instructor Portal | Pure & Simple Bible</title><!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Instructor Portal | Pure & Simple Bible</title>
+    <link rel="icon" type="image/jpg" href="assets/img/psb_preview.jpg">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .serif-text {
+            font-family: 'Merriweather', 'Georgia', serif;
+        }
+
+        .bg-pattern {
+            background-color: #f8fafc;
+            background-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%230a506e' fill-opacity='0.03' fill-rule='evenodd'%3E%3Ccircle cx='3' cy='3' r='3'/%3E%3Ccircle cx='13' cy='13' r='3'/%3E%3C/g%3E%3C/svg%3E");
+        }
+
+        [x-cloak] {
+            display: none !important;
+        }
+    </style>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { roboto: ['Roboto', 'sans-serif'] },
+                    colors: {
+                        brand: { DEFAULT: '#0a506e', dark: '#1e293b', light: '#78a0c8', accent: '#8cbea0', highlight: '#d2691e' }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <script>
+        function instructorEngine() {
+            return {
+                email: sessionStorage.getItem('rs_inst_email') || '',
+                password: '',
+                instructorName: sessionStorage.getItem('rs_inst_name') || '',
+                isAuthenticated: sessionStorage.getItem('rs_inst_auth') === 'true',
+                authError: '',
+                isLoading: false,
+
+                currentTab: 'students', /* 'students' or 'resources' */
+
+                /* Student State */
+                students: [],
+                selectedStudent: null,
+                studentProgress: [],
+
+                /* Contact Admin State */
+                showContactModal: false,
+                contactSubject: '',
+                contactMessage: '',
+                contactStatus: '',
+                contactStatusMessage: '',
+
+                lessonsData: null,
+
+                init() {
+                    if (this.isAuthenticated) {
+                        this.fetchLessonsData();
+                        this.fetchStudents();
+                    }
+                },
+
+                async login() {
+                    this.isLoading = true;
+                    this.authError = '';
+                    try {
+                        let res = await fetch('api.php', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ action: 'instructor_login', email: this.email, password: this.password })
+                        });
+                        let data = await res.json();
+
+                        if (data.success) {
+                            this.isAuthenticated = true;
+                            this.instructorName = data.name;
+                            sessionStorage.setItem('rs_inst_auth', 'true');
+                            sessionStorage.setItem('rs_inst_email', this.email);
+                            sessionStorage.setItem('rs_inst_name', data.name);
+                            this.fetchLessonsData();
+                            this.fetchStudents();
+                        } else {
+                            this.authError = data.message || "Invalid credentials.";
+                        }
+                    } catch (e) {
+                        this.authError = "Connection error.";
+                    }
+                    this.isLoading = false;
+                },
+
+                logout() {
+                    this.isAuthenticated = false;
+                    this.password = '';
+                    this.email = '';
+                    this.instructorName = '';
+                    this.students = [];
+                    this.selectedStudent = null;
+                    sessionStorage.removeItem('rs_inst_auth');
+                    sessionStorage.removeItem('rs_inst_email');
+                    sessionStorage.removeItem('rs_inst_name');
+                },
+
+                async fetchLessonsData() {
+                    try {
+                        let res = await fetch('data/lessons.json');
+                        if (!res.ok) {
+                            res = await fetch('theredemptionseries/data/lessons.json');
+                        }
+                        let data = await res.json();
+                        this.lessonsData = data.lessons;
+                    } catch (e) {
+                        console.error("Could not load lessons data.");
+                    }
+                },
+
+                async fetchStudents() {
+                    try {
+                        let res = await fetch('api.php', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ action: 'instructor_get_students', instructor_email: this.email })
+                        });
+                        let data = await res.json();
+                        if (data.success) {
+                            this.students = data.students;
+                        } else {
+                            this.logout();
+                        }
+                    } catch (e) {
+                        console.error(e);
+                    }
+                },
+
+                async viewStudent(id) {
+                    try {
+                        let res = await fetch('api.php', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ action: 'instructor_get_student_details', instructor_email: this.email, student_id: id })
+                        });
+                        let data = await res.json();
+                        if (data.success) {
+                            this.selectedStudent = data.student;
+                            this.studentProgress = data.progress;
+                            window.scrollTo({ top: 0, behavior: 'smooth' });
+                        }
+                    } catch (e) {
+                        console.error(e);
+                    }
+                },
+
+                goBack() {
+                    this.selectedStudent = null;
+                    this.studentProgress = [];
+                    this.fetchStudents();
+                },
+
+                parseJournal(jsonString) {
+                    if (!jsonString) return [];
+                    try {
+                        let obj = typeof jsonString === 'string' ? JSON.parse(jsonString) : jsonString;
+                        if (!obj) return [];
+                        // FIX: Filter to only map properties that are numbers (0, 1, 2)
+                        // This prevents True/False (1tf1) answers from sneaking into the Deeper Connections!
+                        return Object.entries(obj)
+                            .filter(([key, val]) => !isNaN(key) && String(key).trim() !== '')
+                            .map(([key, val]) => ({ q: parseInt(key) + 1, a: val }));
+                    } catch (e) { return []; }
+                },
+
+                parseQuiz(lessonId, quizDataStr) {
+                    if (!quizDataStr || !this.lessonsData) return [];
+                    try {
+                        let answers = typeof quizDataStr === 'string' ? JSON.parse(quizDataStr) : quizDataStr;
+                        if (!answers) return [];
+                        let lesson = this.lessonsData.find(l => l.id == lessonId);
+                        if (!lesson || !lesson.quiz) return [];
+
+                        let results = [];
+                        if (lesson.quiz.true_false) {
+                            lesson.quiz.true_false.forEach(q => {
+                                let ans = answers[q.id];
+                                let isCorrect = String(ans).toLowerCase() === String(q.answer).toLowerCase();
+                                results.push({ type: 'True / False', question: q.question, answer: ans || 'No answer', correct: isCorrect, expected: String(q.answer) });
+                            });
+                        }
+                        if (lesson.quiz.fill_blank) {
+                            lesson.quiz.fill_blank.forEach(q => {
+                                let ans = answers[q.id] || '';
+                                let isCorrect = ans.trim().toLowerCase() === String(q.answer).trim().toLowerCase();
+                                results.push({ type: 'Search the Scriptures', question: q.verse, answer: ans || 'No answer', correct: isCorrect, expected: q.answer });
+                            });
+                        }
+                        return results;
+                    } catch (e) { return []; }
+                },
+
+                async submitContactForm() {
+                    this.contactStatus = 'sending';
+                    try {
+                        let res = await fetch('api.php', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                action: 'instructor_contact_admin',
+                                instructor_email: this.email,
+                                instructor_name: this.instructorName,
+                                subject: this.contactSubject,
+                                message: this.contactMessage
+                            })
+                        });
+                        let data = await res.json();
+                        if (data.success) {
+                            this.contactStatus = 'success';
+                            this.contactStatusMessage = 'Message sent successfully!';
+                            setTimeout(() => {
+                                this.closeContactModal();
+                            }, 2000);
+                        } else {
+                            this.contactStatus = 'error';
+                            this.contactStatusMessage = data.message || 'Failed to send message.';
+                        }
+                    } catch (e) {
+                        this.contactStatus = 'error';
+                        this.contactStatusMessage = 'Connection error.';
+                    }
+                },
+
+                closeContactModal() {
+                    this.showContactModal = false;
+                    this.contactSubject = '';
+                    this.contactMessage = '';
+                    this.contactStatus = '';
+                    this.contactStatusMessage = '';
+                },
+
+                /* --- UTILS --- */
+                formatDate(dateString) {
+                    if (!dateString) return 'N/A';
+                    let d = new Date(dateString);
+                    return d.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+                }
+            }
+        }
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+</head>
+
+<body class="bg-pattern min-h-screen flex flex-col text-gray-800" x-data="instructorEngine()">
+    <!-- Navigation -->
+    <nav class="bg-brand-dark text-white shadow-md sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <span class="font-bold text-xl tracking-wider text-brand-light">INSTRUCTOR PORTAL</span>
+            </div>
+            <div x-show="isAuthenticated" x-cloak class="flex gap-4 md:gap-6 items-center">
+                <div class="flex gap-4 border-r border-white/20 pr-4 md:pr-6">
+                    <button @click="currentTab = 'students'; goBack()" class="text-sm font-bold transition-colors"
+                        :class="currentTab === 'students' ? 'text-white' : 'text-gray-400 hover:text-gray-200'">My
+                        Students</button>
+                    <button @click="currentTab = 'resources'; goBack()" class="text-sm font-bold transition-colors"
+                        :class="currentTab === 'resources' ? 'text-white' : 'text-gray-400 hover:text-gray-200'">Resources</button>
+                </div>
+                <div class="flex items-center gap-3">
+                    <span class="text-xs font-bold text-brand-light hidden md:inline"
+                        x-text="'Welcome, ' + instructorName"></span>
+                    <button @click="logout()" class="text-white hover:text-brand-light text-sm font-bold ml-2">Sign
+                        Out</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="flex-grow p-4 md:p-8">
+
+        <!-- LOGIN VIEW -->
+        <template x-if="!isAuthenticated">
+            <div
+                class="max-w-md mx-auto mt-20 p-8 bg-white rounded-xl shadow-lg border border-gray-100 border-t-4 border-brand">
+                <div class="text-center mb-8">
+                    <h2 class="text-2xl font-bold text-brand-dark">Instructor Login</h2>
+                    <p class="text-gray-500 text-sm mt-1">Please enter your assigned email and password.</p>
+                </div>
+                <form @submit.prevent="login" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-bold text-gray-700 mb-1">Email Address</label>
+                        <input type="email" x-model="email" required
+                            class="w-full p-3 border border-gray-300 rounded focus:border-brand outline-none focus:ring-1 ring-brand">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold text-gray-700 mb-1">Password</label>
+                        <input type="password" x-model="password" required
+                            class="w-full p-3 border border-gray-300 rounded focus:border-brand outline-none focus:ring-1 ring-brand">
+                    </div>
+                    <p x-show="authError" class="text-red-500 text-sm font-bold text-center" x-text="authError"></p>
+                    <button type="submit"
+                        class="w-full bg-brand hover:bg-brand-dark text-white font-bold py-3 rounded transition-colors mt-4"
+                        :disabled="isLoading">
+                        <span x-show="!isLoading">Access Dashboard &rarr;</span>
+                        <span x-show="isLoading">Verifying...</span>
+                    </button>
+                </form>
+            </div>
+        </template>
+
+        <!-- STUDENTS TAB: LIST VIEW -->
+        <template x-if="isAuthenticated && currentTab === 'students' && !selectedStudent">
+            <div class="max-w-5xl mx-auto">
+                <h1 class="text-3xl font-bold text-brand-dark mb-6">My Assigned Students</h1>
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr
+                                    class="bg-gray-50 text-gray-500 text-sm uppercase tracking-wider border-b border-gray-200">
+                                    <th class="p-4 font-bold">Student Email</th>
+                                    <th class="p-4 font-bold">Location</th>
+                                    <th class="p-4 font-bold">Joined Date</th>
+                                    <th class="p-4 font-bold text-center">Lessons Completed</th>
+                                    <th class="p-4 font-bold text-right">Progress</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-100">
+                                <template x-for="student in students" :key="student.id">
+                                    <tr class="hover:bg-gray-50 transition-colors cursor-pointer"
+                                        @click="viewStudent(student.id)">
+                                        <td class="p-4 font-bold text-brand-dark" x-text="student.email"></td>
+                                        <td class="p-4 text-sm text-gray-600"
+                                            x-text="(student.country || 'N/A') + (student.zipcode ? ' (' + student.zipcode + ')' : '')">
+                                        </td>
+                                        <td class="p-4 text-sm text-gray-600" x-text="formatDate(student.created_at)">
+                                        </td>
+                                        <td class="p-4 text-center">
+                                            <span
+                                                class="inline-block bg-brand-light/20 text-brand-dark font-bold px-3 py-1 rounded-full text-sm"
+                                                x-text="student.completed_count + ' / 6'"></span>
+                                        </td>
+                                        <td class="p-4 text-right">
+                                            <button
+                                                class="text-brand hover:text-brand-highlight font-bold text-sm bg-white border border-gray-200 px-4 py-1 rounded transition-colors shadow-sm">Review
+                                                &rarr;</button>
+                                        </td>
+                                    </tr>
+                                </template>
+                                <tr x-show="students.length === 0">
+                                    <td colspan="5" class="p-12 text-center text-gray-400">
+                                        <svg class="w-12 h-12 mx-auto mb-3 text-gray-300" fill="none"
+                                            stroke="currentColor" viewBox="0 0 24 24"
+                                            xmlns="http://www.w3.org/2000/svg">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z">
+                                            </path>
+                                        </svg>
+                                        <p class="font-bold text-lg">No Students Assigned Yet</p>
+                                        <p class="text-sm mt-1">When a student in your region registers, they will
+                                            appear here.</p>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </template>
+
+        <!-- STUDENTS TAB: DETAILS VIEW (READ ONLY) -->
+        <template x-if="isAuthenticated && currentTab === 'students' && selectedStudent">
+            <div class="max-w-4xl mx-auto">
+                <button @click="goBack()"
+                    class="mb-6 text-sm font-bold text-gray-500 hover:text-brand flex items-center gap-2">
+                    &larr; Back to Student List
+                </button>
+
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200 mb-8 border-t-4 border-t-brand">
+                    <h2 class="text-2xl font-bold text-brand-dark" x-text="selectedStudent.email"></h2>
+                    <p class="text-gray-500 text-sm mt-1">Phone: <span class="font-bold"
+                            x-text="selectedStudent.phone || 'N/A'"></span> &bull; Location: <span class="font-bold"
+                            x-text="(selectedStudent.country || 'N/A') + (selectedStudent.zipcode ? ' (' + selectedStudent.zipcode + ')' : '')"></span>
+                    </p>
+                </div>
+
+                <div class="space-y-6">
+                    <template x-for="prog in studentProgress" :key="prog.course_id + '_' + prog.lesson_id">
+                        <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+                            <div class="bg-gray-50 p-4 border-b border-gray-200 flex justify-between items-center">
+                                <h3 class="font-bold text-brand-dark text-lg">
+                                    <span
+                                        x-text="prog.course_id === 'redemption' ? 'Redemption Series' : prog.course_id"
+                                        class="text-xs uppercase tracking-widest text-brand-highlight mr-2"></span>
+                                    Lesson <span x-text="prog.lesson_id"></span>
+                                </h3>
+                                <div class="flex items-center gap-3">
+                                    <span class="text-xs text-gray-400 italic"
+                                        x-text="'Last saved: ' + formatDate(prog.last_updated)"></span>
+                                    <span x-show="prog.is_completed"
+                                        class="bg-brand-accent/20 text-brand-dark text-xs px-3 py-1 rounded-full font-bold uppercase tracking-wide">✓
+                                        Completed</span>
+                                </div>
+                            </div>
+
+                            <div class="p-6">
+                                <!-- Quiz Grading Block -->
+                                <h4 class="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">Quiz
+                                    Responses</h4>
+                                <div class="space-y-4 mb-8">
+                                    <template x-for="(q, i) in parseQuiz(prog.lesson_id, prog.quiz_data)" :key="'q'+i">
+                                        <div class="bg-gray-50 p-4 rounded border-l-4 border-gray-100"
+                                            :class="q.correct ? 'border-l-green-500' : 'border-l-red-500'">
+                                            <div class="flex justify-between items-start mb-2">
+                                                <p class="text-xs font-bold text-brand uppercase" x-text="q.type"></p>
+                                                <span class="text-xs font-bold px-2 py-1 rounded"
+                                                    :class="q.correct ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'"
+                                                    x-text="q.correct ? '✓ Correct' : '✗ Incorrect'"></span>
+                                            </div>
+                                            <p class="font-medium text-gray-800 mb-2" x-text="q.question"></p>
+                                            <p class="text-sm text-gray-700">Student Answer: <strong
+                                                    x-text="q.answer"></strong></p>
+                                            <p x-show="!q.correct" class="text-sm text-gray-500 mt-1">Correct Answer:
+                                                <span x-text="q.expected"></span></p>
+                                        </div>
+                                    </template>
+                                    <div x-show="parseQuiz(prog.lesson_id, prog.quiz_data).length === 0"
+                                        class="text-gray-400 italic text-sm">
+                                        No quiz data available for this lesson.
+                                    </div>
+                                </div>
+
+                                <!-- Deeper Connections Block -->
+                                <h4
+                                    class="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4 border-t border-gray-100 pt-6">
+                                    Deeper Connections</h4>
+                                <div class="space-y-4">
+                                    <template x-for="j in parseJournal(prog.journal_data)" :key="j.q">
+                                        <div class="bg-blue-50/30 p-4 rounded border-l-4 border-brand-light">
+                                            <p class="text-xs font-bold text-brand mb-2">Response <span
+                                                    x-text="j.q"></span>:</p>
+                                            <p class="serif-text text-gray-700 leading-relaxed" x-text="j.a"></p>
+                                        </div>
+                                    </template>
+                                    <div x-show="parseJournal(prog.journal_data).length === 0"
+                                        class="text-gray-400 italic text-sm">
+                                        No deeper connections saved for this lesson yet.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </template>
+                    <div x-show="studentProgress.length === 0"
+                        class="bg-white p-8 rounded-xl shadow-sm text-center text-gray-500 border border-gray-100">
+                        This student hasn't started any lessons yet.
+                    </div>
+                </div>
+            </div>
+        </template>
+
+        <!-- RESOURCES TAB -->
+        <template x-if="isAuthenticated && currentTab === 'resources'">
+            <div class="max-w-4xl mx-auto space-y-8">
+                <h1 class="text-3xl font-bold text-brand-dark mb-6">Instructor Resources</h1>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                    <!-- Answer Keys Card -->
+                    <div
+                        class="bg-white p-8 rounded-xl shadow-sm border border-gray-200 hover:border-brand transition-colors group">
+                        <div
+                            class="w-12 h-12 bg-brand-light/20 text-brand rounded-full flex items-center justify-center mb-4">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01">
+                                </path>
+                            </svg>
+                        </div>
+                        <h2 class="text-xl font-bold text-brand-dark mb-2">Master Answer Keys</h2>
+                        <p class="text-gray-500 text-sm mb-6 leading-relaxed">Access the preferred answers and scripture
+                            references for all active interactive studies.</p>
+
+                        <div class="space-y-3">
+                            <a href="theredemptionseries/answer-key.html" target="_blank"
+                                class="block w-full text-center bg-gray-100 hover:bg-brand hover:text-white text-brand-dark font-bold py-3 px-4 rounded transition-colors shadow-sm border border-gray-200">
+                                The Redemption Series &rarr;
+                            </a>
+                            <!-- Future studies can be added here -->
+                        </div>
+                    </div>
+
+                    <!-- Support Card -->
+                    <div
+                        class="bg-white p-8 rounded-xl shadow-sm border border-gray-200 hover:border-brand-highlight transition-colors group">
+                        <div
+                            class="w-12 h-12 bg-orange-50 text-brand-highlight rounded-full flex items-center justify-center mb-4">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z">
+                                </path>
+                            </svg>
+                        </div>
+                        <h2 class="text-xl font-bold text-brand-dark mb-2">Administrator Support</h2>
+                        <p class="text-gray-500 text-sm mb-6 leading-relaxed">Need a student re-assigned? Have a
+                            question about the curriculum? Contact the site administrator.</p>
+
+                        <button @click="showContactModal = true"
+                            class="block w-full text-center bg-gray-100 hover:bg-brand-highlight hover:text-white text-brand-dark font-bold py-3 px-4 rounded transition-colors shadow-sm border border-gray-200">
+                            Email David Peake &rarr;
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+        </template>
+
+        <!-- Contact Admin Modal -->
+        <div x-show="showContactModal" x-cloak
+            class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 px-4">
+            <div class="bg-white rounded-xl shadow-lg w-full max-w-lg overflow-hidden"
+                @click.away="closeContactModal()">
+                <div class="bg-brand-dark text-white px-6 py-4 flex justify-between items-center">
+                    <h3 class="font-bold text-lg">Contact Administrator</h3>
+                    <button @click="closeContactModal()"
+                        class="text-gray-300 hover:text-white font-bold text-2xl leading-none">&times;</button>
+                </div>
+                <div class="p-6">
+                    <form @submit.prevent="submitContactForm" class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-bold text-gray-700 mb-1">Subject</label>
+                            <input type="text" x-model="contactSubject" required
+                                class="w-full p-2 border border-gray-300 rounded focus:border-brand outline-none focus:ring-1 ring-brand">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-bold text-gray-700 mb-1">Message</label>
+                            <textarea x-model="contactMessage" required rows="5"
+                                class="w-full p-2 border border-gray-300 rounded focus:border-brand outline-none focus:ring-1 ring-brand"></textarea>
+                        </div>
+
+                        <div x-show="contactStatus === 'error'" class="text-red-500 text-sm font-bold"
+                            x-text="contactStatusMessage"></div>
+                        <div x-show="contactStatus === 'success'" class="text-green-600 text-sm font-bold"
+                            x-text="contactStatusMessage"></div>
+
+                        <div class="flex justify-end gap-3 mt-6">
+                            <button type="button" @click="closeContactModal()"
+                                class="px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-800 rounded font-bold transition-colors">Cancel</button>
+                            <button type="submit"
+                                class="px-4 py-2 bg-brand hover:bg-brand-dark text-white rounded font-bold transition-colors disabled:opacity-50"
+                                :disabled="contactStatus === 'sending'">
+                                <span x-show="contactStatus !== 'sending'">Send Message</span>
+                                <span x-show="contactStatus === 'sending'">Sending...</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+    </main>
+</body>
+
+</html>
     <link rel="icon" type="image/jpg" href="assets/img/psb_preview.jpg">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
